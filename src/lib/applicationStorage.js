@@ -52,7 +52,13 @@ export function saveDraftApplication(data) {
     source: 'website',
   }
 
-  const next = { ...current, ...data, updatedAt: new Date().toISOString() }
+  const next = {
+    ...current,
+    ...data,
+    id: current.id,
+    createdAt: current.createdAt,
+    updatedAt: new Date().toISOString(),
+  }
   localStorage.setItem(DRAFT_KEY, JSON.stringify(next))
   return next
 }

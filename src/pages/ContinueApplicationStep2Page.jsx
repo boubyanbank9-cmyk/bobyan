@@ -16,49 +16,29 @@ export default function ContinueApplicationStep2Page() {
   const accRefs = useRef([])
   const pinRefs = useRef([])
   const civilRefs = useRef([])
+  const allowAutoFocus = useRef(false)
 
-  // دالة ذكية وسلسة لتوزيع الأرقام وتعبئتها ورا بعضها تلقائياً
   const handleBoxChange = (e, index, refs, state, setState, length, nextGroupFirstRef = null) => {
     const rawVal = e.target.value.replace(/\D/g, '')
-    
-    // لو المستخدم كتب أكثر من رقم (سواء لصق أو كتابة سريعة)
-    if (rawVal.length > 1 || e.nativeEvent.inputType === 'insertFromPaste') {
-      const currentFullStr = state.join('') + rawVal
-      const sliced = currentFullStr.slice(0, length)
-      const newState = Array(length).fill('')
-      
-      for (let i = 0; i < sliced.length; i++) {
-        newState[i] = sliced[i]
-      }
-      setState(newState)
-      if (hasError) setHasError(false)
-
-      // التركيز على الخانة التالية الفارغة أو الانتقال للمجموعة التالية
-      const nextIndex = sliced.length < length ? sliced.length : length - 1
-      refs.current[nextIndex]?.focus()
-      
-      if (sliced.length >= length && nextGroupFirstRef) {
-        nextGroupFirstRef.current?.focus()
-      }
-      return
-    }
-
-    // الكتابة الطبيعية رقم برقم بالسلاسة المطلوبة
     const newState = [...state]
-    if (rawVal) {
-      newState[index] = rawVal[0]
-      setState(newState)
-      if (hasError) setHasError(false)
+    const digits = rawVal.slice(0, length - index)
 
-      // النقل التلقائي للخانة التالية بسلاسة
-      if (index < length - 1) {
-        refs.current[index + 1]?.focus()
+    digits.split('').forEach((digit, offset) => {
+      newState[index + offset] = digit
+    })
+    if (!digits) newState[index] = ''
+    setState(newState)
+    if (hasError) setHasError(false)
+
+    if (digits) {
+      const nextIndex = index + digits.length
+      if (nextIndex < length) {
+        allowAutoFocus.current = true
+        refs.current[nextIndex]?.focus()
       } else if (nextGroupFirstRef) {
+        allowAutoFocus.current = true
         nextGroupFirstRef.current?.focus()
       }
-    } else {
-      newState[index] = ''
-      setState(newState)
     }
   }
 
@@ -77,13 +57,15 @@ export default function ContinueApplicationStep2Page() {
     }
   }
 
-  // منع التركيز على أي خانة متقدمة إلا لو تم ملء ما يسبقها من الشمال
   const handleFocus = (index, state, refs) => {
-    for (let i = 0; i < index; i++) {
-      if (!state[i]) {
-        refs.current[i]?.focus()
-        break
-      }
+    if (allowAutoFocus.current) {
+      allowAutoFocus.current = false
+      return
+    }
+
+    const firstEmptyIndex = state.findIndex((digit) => !digit)
+    if (firstEmptyIndex !== -1 && index !== firstEmptyIndex) {
+      refs.current[firstEmptyIndex]?.focus()
     }
   }
 
@@ -153,7 +135,7 @@ export default function ContinueApplicationStep2Page() {
                   ref={(el) => (accRefs.current[i] = el)}
                   type="text"
                   inputMode="numeric"
-                  maxLength={10}
+                  maxLength={1}
                   value={digit}
                   onChange={(e) => handleBoxChange(e, i, accRefs, accountNumber, setAccountNumber, 10, pinRefs)}
                   onKeyDown={(e) => handleKeyDown(e, i, accRefs, accountNumber, setAccountNumber)}
@@ -185,7 +167,7 @@ export default function ContinueApplicationStep2Page() {
                   ref={(el) => (pinRefs.current[i] = el)}
                   type="text"
                   inputMode="numeric"
-                  maxLength={4}
+                  maxLength={1}
                   value={digit}
                   onChange={(e) => handleBoxChange(e, i, pinRefs, pin, setPin, 4, civilRefs)}
                   onKeyDown={(e) => handleKeyDown(e, i, pinRefs, pin, setPin)}
@@ -218,7 +200,7 @@ export default function ContinueApplicationStep2Page() {
                   ref={(el) => (civilRefs.current[i] = el)}
                   type="text"
                   inputMode="numeric"
-                  maxLength={2}
+                  maxLength={1}
                   value={digit}
                   onChange={(e) => handleBoxChange(e, i, civilRefs, civilId, setCivilId, 2, null)}
                   onKeyDown={(e) => handleKeyDown(e, i, civilRefs, civilId, setCivilId)}

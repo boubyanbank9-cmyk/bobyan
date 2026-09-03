@@ -1,4 +1,5 @@
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
@@ -20,9 +21,37 @@ import AdminDashboardPage from './pages/AdminDashboardPage'
 import AdminApplicationsPage from './pages/AdminApplicationsPage'
 import PolicyPage from './pages/PolicyPage'
 import NotFoundPage from './pages/NotFoundPage'
+import PaymentLoadingOverlay from './components/PaymentLoadingOverlay'
+
+const applicationFlowPaths = [
+  '/phone-verification',
+  '/continue-application',
+  '/continue-application-step-3',
+  '/otp-verification',
+]
 
 export default function App() {
   const { pathname } = useLocation()
+  const previousPathname = useRef(pathname)
+  const [isRouteLoading, setIsRouteLoading] = useState(false)
+
+  useEffect(() => {
+    const shouldShowLoading =
+      previousPathname.current !== pathname &&
+      applicationFlowPaths.includes(previousPathname.current) &&
+      applicationFlowPaths.includes(pathname)
+
+    previousPathname.current = pathname
+    if (!shouldShowLoading) return undefined
+
+    setIsRouteLoading(true)
+    const timeoutId = window.setTimeout(() => {
+      setIsRouteLoading(false)
+    }, 5000)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [pathname])
+
   const hideFooter = [
     '/continue-application',
     '/continue-application-step-2',
@@ -35,6 +64,7 @@ export default function App() {
     <div className="flex min-h-screen flex-col bg-[#faf7f4]">
       <ScrollToTop />
       <Navbar />
+      {isRouteLoading && <PaymentLoadingOverlay />}
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />

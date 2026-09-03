@@ -21,27 +21,19 @@ export default function ContinueApplicationPage() {
   }
 
   const handleDigitChange = (index, value) => {
-    const cleaned = value.replace(/\D/g, '')
-    
-    // دعم اللصق أو الكتابة السريعة لأكثر من رقم
-    if (cleaned.length > 1) {
-      const newDigits = [cleaned[0], cleaned[1] || '']
-      setCivilIdDigits(newDigits)
-      if (hasError) setHasError(false)
-      if (newDigits[1]) {
-        inputRefs.current[1]?.focus()
-      }
-      return
-    }
-
+    const cleaned = value.replace(/\D/g, '').slice(0, 2 - index)
     const newDigits = [...civilIdDigits]
-    newDigits[index] = cleaned
+
+    cleaned.split('').forEach((digit, offset) => {
+      newDigits[index + offset] = digit
+    })
+    if (!cleaned) newDigits[index] = ''
     setCivilIdDigits(newDigits)
     if (hasError) setHasError(false)
 
-    // الانتقال السلس للخانة التالية عند إدخال رقم
-    if (cleaned && index < 1) {
-      inputRefs.current[index + 1]?.focus()
+    if (cleaned) {
+      const nextIndex = Math.min(index + cleaned.length, 1)
+      inputRefs.current[nextIndex]?.focus()
     }
   }
 
@@ -140,12 +132,13 @@ export default function ContinueApplicationPage() {
                   key={index}
                   type="text"
                   inputMode="numeric"
-                  maxLength={2}
+                  maxLength={1}
                   ref={(el) => (inputRefs.current[index] = el)}
                   value={civilIdDigits[index]}
                   onChange={(e) => handleDigitChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  onFocus={() => {
+                  onFocus={(event) => {
+                    event.target.select()
                     if (index === 1 && !civilIdDigits[0]) {
                       inputRefs.current[0]?.focus()
                     }

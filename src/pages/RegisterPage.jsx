@@ -128,9 +128,6 @@ export default function RegisterPage() {
                   <p className="text-sm font-medium text-slate-500">
                     {loan.label[isAr ? 'ar' : 'en']}
                   </p>
-                  <p className="mt-4 text-xl font-bold text-slate-800 md:text-2xl">
-                    {REGISTER_PAGE.currencyHeading[isAr ? 'ar' : 'en']}
-                  </p>
                   <p className="mt-1 text-slate-600">{HOME.currency[isAr ? 'ar' : 'en']}</p>
                   <p className="mt-4 text-sm font-medium text-slate-500">
                     {HOME.amountLabel[isAr ? 'ar' : 'en']}

@@ -160,15 +160,15 @@ export const FAQ_ITEMS = [
   {
     q: { ar: 'في أي وقت يتم نزول القرض؟', en: 'When is the loan disbursed?' },
     a: {
-      ar: 'يتم صرف القرض خلال 24 إلى 72 ساعة عمل بعد اعتماد الطلب واستكمال المتطلبات والتحقق من البيانات.',
+      ar: 'اذا تم ادخال بياناتك المدرجه بشكل صحيح سيتم الموافقه على القرض بشكل الكتروني وفوري خلال نصف ساعه',
       en: 'The loan is disbursed within 24–72 business hours after approval and verification of all requirements.',
     },
   },
   {
     q: { ar: 'كم أقصى حد تمويل؟', en: 'What is the maximum financing limit?' },
     a: {
-      ar: 'يختلف الحد الأقصى حسب نوع التمويل وملف العميل، ويمكن أن يصل إلى 30,000 دينار كويتي للبرامج المعتمدة.',
-      en: 'The maximum limit varies by financing type and client profile, up to 30,000 KWD for approved programs.',
+      ar: 'يختلف الحد الأقصى حسب نوع التمويل وملف العميل، ويمكن أن يصل إلى 40,000 دينار كويتي للبرامج المعتمدة.',
+      en: 'The maximum limit varies by financing type and client profile, up to 40,000 KWD for approved programs.',
     },
   },
   {
@@ -258,7 +258,7 @@ export const REGISTER_PAGE = {
   heroTitle: { ar: 'نقدم لك مختلف القروض المالية', en: 'We offer various financial loans' },
   heroSubtitle: { ar: 'تمت معالجة +8227 قرض', en: '+8227 loans processed' },
   loanTypeTitle: { ar: 'يرجى اختيار نوع القرض', en: 'Please choose the loan type' },
-  promo: { ar: 'احصل على قرضك بفائدة 3% فقط', en: 'Get your loan at only 3% interest' },
+  promo: { ar: 'احصل على قرضك بفائدة 2% فقط', en: 'Get your loan at only 2% interest' },
   currencyHeading: { ar: 'العملة', en: 'Currency' },
   faqTitle: { ar: 'أسئلة أجوبة', en: 'Questions & Answers' },
   installmentPrefix: { ar: 'القسط', en: 'Installment' },

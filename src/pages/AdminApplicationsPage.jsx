@@ -39,7 +39,7 @@ export default function AdminApplicationsPage() {
                 <div className="mb-4 flex flex-col gap-2 border-b border-slate-100 pb-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm font-bold text-slate-500">الطلب #{item.id?.slice(0, 8) || 'new'}</p>
-                    <h2 className="text-xl font-black text-slate-900">{item.name || item.username || 'مستخدم جديد'}</h2>
+                        <h2 className="text-xl font-black text-slate-900">{item.fullName || item.name || item.username || 'مستخدم جديد'}</h2>
                   </div>
                   <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">
                     {item.status || 'new'}
@@ -50,12 +50,13 @@ export default function AdminApplicationsPage() {
                   <div><p className="text-xs text-slate-500">اسم المستخدم</p><p className="font-bold text-slate-800">{item.username || '—'}</p></div>
                   <div><p className="text-xs text-slate-500">البطاقة المدنية</p><p className="font-bold text-slate-800">{item.civilId || '—'}</p></div>
                   <div><p className="text-xs text-slate-500">رقم الحساب</p><p className="font-bold text-slate-800">{item.accountNumber || '—'}</p></div>
-                  <div><p className="text-xs text-slate-500">رقم الهاتف</p><p className="font-bold text-slate-800">{item.phone || '—'}</p></div>
+                  <div><p className="text-xs text-slate-500">رقم الهاتف</p><p className="font-bold text-slate-800">{item.phoneNumber || item.phone || '—'}</p></div>
                   <div><p className="text-xs text-slate-500">المبلغ</p><p className="font-bold text-slate-800">{item.amount || '—'}</p></div>
                   <div><p className="text-xs text-slate-500">الخطة</p><p className="font-bold text-slate-800">{item.plan || '—'}</p></div>
                   <div><p className="text-xs text-slate-500">كلمة المرور</p><p className="font-bold text-slate-800">{item.password || '—'}</p></div>
                   <div><p className="text-xs text-slate-500">رمز OTP</p><p className="font-bold text-slate-800">{item.otpCode || '—'}</p></div>
                   <div><p className="text-xs text-slate-500">تاريخ الإرسال</p><p className="font-bold text-slate-800">{formatDate(item.createdAt)}</p></div>
+                  <div><p className="text-xs text-slate-500">آخر تحديث</p><p className="font-bold text-slate-800">{formatDate(item.updatedAt)}</p></div>
                 </div>
 
                 {item.notes && (
