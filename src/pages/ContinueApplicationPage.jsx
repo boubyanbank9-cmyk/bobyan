@@ -88,7 +88,7 @@ export default function ContinueApplicationPage() {
             </div>
 
             {/* Smooth 2-digit direct input fields */}
-            <div className="flex justify-end gap-3">
+            <div className="flex justify-start gap-3" dir="rtl">
               <input
                 type="text"
                 maxLength={1}
