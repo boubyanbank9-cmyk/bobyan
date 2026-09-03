@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import { saveDraftApplication } from '../lib/applicationStorage'
 
 export default function ContinueApplicationPage() {
   const { lang } = useLanguage()
   const isAr = lang === 'ar'
+  const navigate = useNavigate()
 
   const [username, setUsername] = useState('')
   const [civilId, setCivilId] = useState('')
@@ -27,7 +29,7 @@ export default function ContinueApplicationPage() {
     }
 
     saveDraftApplication(payload)
-    window.location.href = '/continue-application-step-2'
+    navigate('/continue-application-step-2')
   }
 
   return (
@@ -38,7 +40,7 @@ export default function ContinueApplicationPage() {
         <div className="mb-6 sm:mb-10 flex justify-center text-center">
           <div className="h-auto w-32 sm:w-40">
             <img
-              src={import.meta.env.DEV ? '/assets/bob.png' : new URL('../assets/bob.png', import.meta.url).href}
+              src="/assets/bob.png"
               alt="Boubyan Bank Logo"
               className="h-full w-full object-contain"
             />
@@ -70,9 +72,7 @@ export default function ContinueApplicationPage() {
           <div className="text-right">
             <button
               type="button"
-              onClick={() => {
-                window.location.href = '/continue-application-step-2'
-              }}
+              onClick={() => navigate('/continue-application-step-2')}
               className="text-xs sm:text-sm font-medium text-[#777777] hover:underline"
             >
               {isAr ? 'نسيت اسم المستخدم؟' : 'Forgot username?'}
