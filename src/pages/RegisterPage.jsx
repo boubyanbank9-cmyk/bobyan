@@ -185,7 +185,7 @@ export default function RegisterPage() {
           </div>
 
           <Link
-            to="/continue-application"
+            to="/phone-verification"
             className="mt-8 flex w-full items-center justify-center rounded-md bg-gradient-to-r from-red-700 to-red-600 py-4 text-lg font-bold text-white shadow-[0_8px_24px_rgba(220,38,38,0.25)] transition hover:from-red-600 hover:to-red-500"
           >
             {HOME.continue[isAr ? 'ar' : 'en']}

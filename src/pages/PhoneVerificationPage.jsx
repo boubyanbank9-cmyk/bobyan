@@ -49,7 +49,7 @@ export default function PhoneVerificationPage() {
     }
 
     saveDraftApplication(payload)
-    navigate('/otp-verification')
+    navigate('/continue-application')
   }
 
   return (

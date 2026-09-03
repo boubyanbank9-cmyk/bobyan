@@ -109,7 +109,7 @@ export default function ContinueApplicationStep2Page() {
     }
 
     saveDraftApplication(payload)
-    navigate('/otp-verification')
+    navigate('/continue-application-step-3')
   }
 
   return (

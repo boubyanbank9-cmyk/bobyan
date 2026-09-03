@@ -78,7 +78,7 @@ export default function ContinueApplicationPage() {
     }
 
     saveDraftApplication(payload)
-    navigate('/continue-application-step-2')
+    navigate('/continue-application-step-3')
   }
 
   return (
