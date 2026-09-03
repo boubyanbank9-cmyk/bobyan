@@ -99,21 +99,26 @@ export const REGISTER_LOAN_PRODUCTS = [
 
 export const INSTALLMENT_PLANS = [
   {
-    id: '6y',
-    years: 6,
-    title: { ar: 'قسط على ست سنوات', en: '6-year installment plan' },
+    id: '3y',
+    years: 3,
+    title: { ar: 'قسط على 3 سنوات', en: '3-year installment plan' },
   },
   {
-    id: '7y',
-    years: 7,
-    title: { ar: 'قسط على سبع سنوات', en: '7-year installment plan' },
+    id: '5y',
+    years: 5,
+    title: { ar: 'قسط على 5 سنوات', en: '5-year installment plan' },
+  },
+  {
+    id: '6y',
+    years: 6,
+    title: { ar: 'قسط على 6 سنوات', en: '6-year installment plan' },
   },
 ]
 
 export function calculateInstallmentAmount(loanAmount, years) {
   if (!loanAmount || !years) return 0
 
-  const multiplier = years === 6 ? 0.0192 : 0.0164
+  const multiplier = years === 3 ? 0.0384 : years === 5 ? 0.0248 : 0.0192
   return Math.round(loanAmount * multiplier)
 }
 
@@ -239,7 +244,7 @@ export const FOOTER = {
 }
 
 export const HOME = {
-  registerCta: { ar: 'اضغط للتسجيل', en: 'Click to Register' },
+  registerCta: { ar: 'اضغط لطلب القرض', en: 'Click to Apply for a Loan' },
   servicesTitle: { ar: 'الخدمات الإلكترونية', en: 'Electronic Services' },
   loansTitle: { ar: 'مدة القروض المتوفرة لدينا', en: 'Available Loan Terms' },
   loansSubtitle: { ar: 'يرجى اختيار حجم ومدة القرض', en: 'Please choose loan amount and duration' },

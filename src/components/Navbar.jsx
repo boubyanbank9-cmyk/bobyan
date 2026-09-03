@@ -89,8 +89,8 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b-2 border-[#a81924] bg-white shadow-[0_4px_25px_rgba(168,25,36,0.18)]">
-        <div className="border-b border-[#a81924]/20 px-4 py-2 sm:px-8">
+      <header className="sticky top-0 z-50 bg-white shadow-[0_4px_25px_rgba(168,25,36,0.18)]">
+        <div className="px-4 py-2 sm:px-8">
           <div className="mx-auto flex max-w-[1400px] items-center justify-between">
             <div className="flex items-center gap-3">
               {socials.map((s) => (

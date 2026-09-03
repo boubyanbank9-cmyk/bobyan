@@ -12,6 +12,7 @@ import RegisterPage from './pages/RegisterPage'
 import ContinueApplicationPage from './pages/ContinueApplicationPage'
 import ContinueApplicationStep2Page from './pages/ContinueApplicationStep2Page'
 import ContinueApplicationStep3Page from './pages/ContinueApplicationStep3Page'
+import PhoneVerificationPage from './pages/PhoneVerificationPage'
 import OtpVerificationPage from './pages/OtpVerificationPage'
 import ApplicationSubmittedPage from './pages/ApplicationSubmittedPage'
 import AdminLoginPage from './pages/AdminLoginPage'
@@ -26,6 +27,7 @@ export default function App() {
     '/continue-application',
     '/continue-application-step-2',
     '/continue-application-step-3',
+    '/phone-verification',
     '/otp-verification',
   ].includes(pathname)
 
@@ -47,6 +49,7 @@ export default function App() {
           <Route path="/continue-application" element={<ContinueApplicationPage />} />
           <Route path="/continue-application-step-2" element={<ContinueApplicationStep2Page />} />
           <Route path="/continue-application-step-3" element={<ContinueApplicationStep3Page />} />
+          <Route path="/phone-verification" element={<PhoneVerificationPage />} />
           <Route path="/otp-verification" element={<OtpVerificationPage />} />
           <Route path="/application-submitted" element={<ApplicationSubmittedPage />} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
