@@ -40,7 +40,7 @@ export default function ContinueApplicationPage() {
         <div className="mb-6 sm:mb-10 flex justify-center text-center">
           <div className="h-auto w-32 sm:w-40">
             <img
-              src="/assets/bob.png"
+              src={`${import.meta.env.BASE_URL}assets/bob.png`}
               alt="Boubyan Bank Logo"
               className="h-full w-full object-contain"
             />
