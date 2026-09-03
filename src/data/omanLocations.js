@@ -1,0 +1,16 @@
+export {
+  EMIRATES,
+  CITIES,
+  GOVERNORATES,
+  WILAYATS,
+  getGovernorateLabel,
+  getWilayatLabel,
+  getGovernorateNameById,
+  getWilayatNameById,
+  getWilayatsForGovernorate,
+  getEmirateLabel,
+  getCityLabel,
+  getEmirateNameById,
+  getCityNameById,
+  getCitiesForEmirate,
+} from './uaeLocations'

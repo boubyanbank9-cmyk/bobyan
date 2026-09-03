@@ -1,0 +1,108 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-alain-blue: #0077c8;
+  --color-alain-blue-dark: #005fa3;
+  --color-alain-navy: #0b2e4e;
+  --color-alain-green: #1f8a4c;
+  --color-alain-footer: #1e5ebc;
+  --color-admin: #1f8a4c;
+  --color-admin-dark: #166b3a;
+  --color-admin-deep: #0f3d24;
+  --color-admin-soft: #e8f6ee;
+  --font-sans: 'Segoe UI', Tahoma, Arial, 'Helvetica Neue', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.alain-link {
+  color: var(--color-alain-blue);
+}
+
+.alain-link:hover {
+  color: var(--color-alain-blue-dark);
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-bold transition;
+  background: var(--color-alain-blue);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--color-alain-blue-dark);
+}
+
+.section-title {
+  @apply text-3xl md:text-4xl font-black text-slate-900 tracking-tight uppercase;
+}
+
+.card-hover {
+  @apply transition-all duration-300 hover:-translate-y-1;
+}
+
+/* Hide page chrome float when full mobile menu is open */
+html.mobile-menu-open .wa-page-float {
+  display: none !important;
+}
+
+.hero-scroller {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hero-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.hero-track {
+  will-change: transform;
+}
+
+/* Hide native scrollbar on mobile carousels */
+.snap-x::-webkit-scrollbar {
+  display: none;
+}
+
+.hero-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fade-in 0.45s ease;
+}
+
+.page-hero-gradient {
+  background: linear-gradient(135deg, #120305 0%, #3a0a10 50%, #200508 100%);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.admin-shell {
+  overflow-x: clip;
+}
+
+.admin-mobile-tabs a,
+.admin-mobile-tabs button {
+  -webkit-tap-highlight-color: transparent;
+}

@@ -1,0 +1,2 @@
+-- Deprecated: use otp-attempts-history.sql instead (includes history + keeps card data on lock)
+-- Kept for reference only.

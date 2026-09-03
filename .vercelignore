@@ -1,0 +1,9 @@
+tmp
+dist
+node_modules
+.env
+.env.*
+.git
+*.log
+scripts/*.json
+scripts/catalog.json
