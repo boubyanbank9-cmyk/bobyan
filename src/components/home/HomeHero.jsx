@@ -23,7 +23,7 @@ export default function HomeHero() {
           style={{
             backgroundImage: `url('${HERO_IMAGE_URL}')`,
             backgroundSize: 'contain',
-            backgroundPosition: 'center center',
+            backgroundPosition: 'center top',
             backgroundRepeat: 'no-repeat',
           }}
         >
