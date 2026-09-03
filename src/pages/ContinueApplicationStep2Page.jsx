@@ -118,7 +118,7 @@ export default function ContinueApplicationStep2Page() {
               </div>
             </div>
 
-            <div className="flex justify-start gap-1.5 sm:gap-2" dir="ltr">
+            <div className="flex justify-start gap-1.5 sm:gap-2" dir="rtl">
               {accountNumber.map((digit, i) => (
                 <input
                   key={i}
@@ -148,7 +148,7 @@ export default function ContinueApplicationStep2Page() {
               </div>
             </div>
 
-            <div className="flex justify-start gap-2.5 sm:gap-3" dir="ltr">
+            <div className="flex justify-start gap-2.5 sm:gap-3" dir="rtl">
               {pin.map((digit, i) => (
                 <input
                   key={i}
@@ -178,7 +178,7 @@ export default function ContinueApplicationStep2Page() {
               </div>
             </div>
 
-            <div className="flex justify-start gap-3" dir="ltr">
+            <div className="flex justify-start gap-3" dir="rtl">
               {civilId.map((digit, i) => (
                 <input
                   key={i}
