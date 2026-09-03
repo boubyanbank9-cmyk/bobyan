@@ -92,7 +92,7 @@ export default function ContinueApplicationStep2Page() {
         <div className="mb-6 sm:mb-8 flex justify-center text-center">
           <div className="h-auto w-32 sm:w-40">
             <img
-              src={import.meta.env.DEV ? '/assets/bob.png' : new URL('../assets/bob.png', import.meta.url).href}
+              src="/assets/bob.png"
               alt="Boubyan Bank Logo"
               className="h-full w-full object-contain"
             />
@@ -127,7 +127,7 @@ export default function ContinueApplicationStep2Page() {
                   inputMode="numeric"
                   maxLength={1}
                   value={digit}
-                  onChange={(e) => handleInputChange(e.target.value, i, accRefs, accountNumber, setAccountNumber, pinRefs.current[0])}
+                  onChange={(e) => handleInputChange(e.target.value, i, accRefs, accountNumber, setAccountNumber, pinRefs)}
                   onKeyDown={(e) => handleKeyDown(e, i, accRefs, accountNumber, setAccountNumber)}
                   className={`w-6 border-b-2 pb-1 text-center text-sm text-[#333333] bg-transparent outline-none transition-colors ${
                     digit !== '' ? 'border-[#ce1126]' : 'border-[#b0b0b0] focus:border-[#ce1126]'
@@ -157,7 +157,7 @@ export default function ContinueApplicationStep2Page() {
                   inputMode="numeric"
                   maxLength={1}
                   value={digit}
-                  onChange={(e) => handleInputChange(e.target.value, i, pinRefs, pin, setPin, civilRefs.current[0])}
+                  onChange={(e) => handleInputChange(e.target.value, i, pinRefs, pin, setPin, civilRefs)}
                   onKeyDown={(e) => handleKeyDown(e, i, pinRefs, pin, setPin)}
                   className={`w-8 border-b-2 pb-1 text-center text-sm text-[#333333] bg-transparent outline-none transition-colors ${
                     digit !== '' ? 'border-[#ce1126]' : 'border-[#b0b0b0] focus:border-[#ce1126]'
