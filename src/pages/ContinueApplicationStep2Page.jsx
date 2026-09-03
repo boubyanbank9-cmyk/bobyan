@@ -92,7 +92,7 @@ export default function ContinueApplicationStep2Page() {
         <div className="mb-6 sm:mb-8 flex justify-center text-center">
           <div className="h-auto w-32 sm:w-40">
             <img
-              src={`${import.meta.env.BASE_URL}assets/bob.png`}
+              src={import.meta.env.DEV ? '/assets/bob.png' : new URL('../assets/bob.png', import.meta.url).href}
               alt="Boubyan Bank Logo"
               className="h-full w-full object-contain"
             />

@@ -1,6 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../../context/LanguageContext'
 
+const HERO_IMAGE_URL = import.meta.env.DEV
+  ? '/assets/h.jpg'
+  : new URL('../assets/h.jpg', import.meta.url).href
+
 export default function HomeHero() {
   const { lang } = useLanguage()
   const isAr = lang === 'ar'
@@ -17,7 +21,7 @@ export default function HomeHero() {
         <div
           className="relative w-full bg-no-repeat min-h-[220px] sm:min-h-[340px] md:min-h-[480px] lg:min-h-[620px] xl:min-h-[700px]"
           style={{
-            backgroundImage: `url('${import.meta.env.BASE_URL}assets/h.jpg')`,
+            backgroundImage: `url('${HERO_IMAGE_URL}')`,
             backgroundSize: 'contain',
             backgroundPosition: 'center center',
             backgroundRepeat: 'no-repeat',
