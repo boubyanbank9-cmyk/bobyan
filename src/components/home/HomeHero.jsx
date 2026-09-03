@@ -17,7 +17,7 @@ export default function HomeHero() {
         <div
           className="relative w-full bg-no-repeat min-h-[220px] sm:min-h-[340px] md:min-h-[480px] lg:min-h-[620px] xl:min-h-[700px]"
           style={{
-            backgroundImage: "url('/assets/h.jpg')",
+            backgroundImage: `url('${import.meta.env.BASE_URL}assets/h.jpg')`,
             backgroundSize: 'contain',
             backgroundPosition: 'center center',
             backgroundRepeat: 'no-repeat',
