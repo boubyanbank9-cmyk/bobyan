@@ -89,8 +89,8 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b-2 border-red-900 bg-gradient-to-b from-[#120305] via-[#200508] to-[#120305] shadow-[0_4px_25px_rgba(220,20,60,0.25)]">
-        <div className="border-b border-red-900/30 px-4 py-2 sm:px-8">
+      <header className="sticky top-0 z-50 border-b-2 border-[#a81924] bg-white shadow-[0_4px_25px_rgba(168,25,36,0.18)]">
+        <div className="border-b border-[#a81924]/20 px-4 py-2 sm:px-8">
           <div className="mx-auto flex max-w-[1400px] items-center justify-between">
             <div className="flex items-center gap-3">
               {socials.map((s) => (
@@ -99,7 +99,7 @@ export default function Navbar() {
                   href={s.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-red-800/40 bg-red-950/60 text-red-300 shadow-sm transition hover:bg-red-600 hover:text-white"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-[#a81924] bg-white text-[#a81924] shadow-sm transition hover:bg-[#a81924] hover:text-white"
                   aria-label={s.type}
                 >
                   <SocialIcon type={s.type} />
@@ -109,7 +109,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={toggleLang}
-              className="rounded-full border border-red-800/50 bg-red-950/40 px-3 py-1 text-xs font-bold text-red-200 shadow-sm transition hover:bg-red-600 hover:text-white"
+              className="rounded-full border border-[#a81924] bg-white px-3 py-1 text-xs font-bold text-[#a81924] shadow-sm transition hover:bg-[#a81924] hover:text-white"
             >
               {isAr ? 'English (EN)' : 'العربية (AR)'}
             </button>
@@ -127,8 +127,8 @@ export default function Navbar() {
                     to={item.href}
                     className={`relative inline-flex items-center justify-center rounded-full px-6 py-2.5 text-center text-[14px] font-bold shadow-md transition-all duration-300 ${
                       active
-                        ? 'border border-red-400 bg-gradient-to-r from-red-700 to-red-600 text-white shadow-[0_0_20px_rgba(255,0,0,0.6)]'
-                        : 'border border-red-900/60 bg-gradient-to-b from-[#2a080c] to-[#120204] text-red-100 hover:border-red-600 hover:from-red-900 hover:to-red-700'
+                        ? 'border border-[#a81924] bg-[#a81924] text-white shadow-[0_0_20px_rgba(168,25,36,0.3)]'
+                        : 'border border-[#a81924] bg-white text-[#a81924] hover:bg-[#a81924] hover:text-white'
                     }`}
                   >
                     {item.label[isAr ? 'ar' : 'en']}
@@ -143,11 +143,11 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="border-t border-red-900/30 bg-[#180406] px-4 py-3 shadow-inner md:hidden">
+        <div className="border-t border-[#a81924]/20 bg-white px-4 py-3 shadow-inner md:hidden">
           <div className="flex items-center justify-between gap-3">
             <button
               type="button"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-red-800/40 bg-red-950/60 text-red-200 transition hover:bg-red-700 hover:text-white"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-[#a81924] bg-white text-[#a81924] transition hover:bg-[#a81924] hover:text-white"
               aria-label="Open menu"
               onClick={() => setMobileOpen(true)}
             >
@@ -158,7 +158,7 @@ export default function Navbar() {
               href={`https://wa.me/${SITE_CONTACT.whatsapp}`}
               target="_blank"
               rel="noreferrer"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-red-800/40 bg-red-950/60 text-lg"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#a81924] bg-white text-lg text-[#a81924]"
               aria-label="WhatsApp"
             >
               💬
@@ -169,11 +169,11 @@ export default function Navbar() {
 
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-[60] flex flex-col bg-[#120305]/95 text-white backdrop-blur-md md:hidden"
+          className="fixed inset-0 z-[60] flex flex-col bg-white text-[#a81924] md:hidden"
           dir={isAr ? 'rtl' : 'ltr'}
         >
-          <div className="relative flex h-[65px] shrink-0 items-center justify-between border-b border-red-900/40 px-4">
-            <button type="button" className="p-2 text-red-300 hover:text-white" aria-label="Close" onClick={closeMobile}>
+          <div className="relative flex h-[65px] shrink-0 items-center justify-between border-b border-[#a81924]/20 px-4">
+            <button type="button" className="p-2 text-[#a81924] hover:text-[#7f121b]" aria-label="Close" onClick={closeMobile}>
               <IconClose />
             </button>
             <div className="w-10" />
@@ -186,7 +186,7 @@ export default function Navbar() {
                   key={item.href}
                   to={item.href}
                   onClick={closeMobile}
-                  className="block rounded-xl border border-red-900/30 bg-red-950/30 px-4 py-3 text-[16px] font-bold text-red-100 shadow-sm transition hover:border-red-500 hover:bg-red-700"
+                  className="block rounded-xl border border-[#a81924] bg-white px-4 py-3 text-[16px] font-bold text-[#a81924] shadow-sm transition hover:bg-[#a81924] hover:text-white"
                 >
                   {item.label[isAr ? 'ar' : 'en']}
                 </Link>
@@ -194,11 +194,11 @@ export default function Navbar() {
             </nav>
           </div>
 
-          <div className="shrink-0 border-t border-red-900/40 bg-[#180406] px-6 py-5">
+          <div className="shrink-0 border-t border-[#a81924]/20 bg-white px-6 py-5">
             <button
               type="button"
               onClick={toggleLang}
-              className="w-full rounded-full border border-red-700 bg-red-900/60 py-2.5 text-sm font-bold text-white"
+              className="w-full rounded-full border border-[#a81924] bg-white py-2.5 text-sm font-bold text-[#a81924]"
             >
               {isAr ? 'English' : 'العربية'}
             </button>
