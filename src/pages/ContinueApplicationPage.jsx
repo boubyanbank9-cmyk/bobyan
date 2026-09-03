@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import { saveDraftApplication } from '../lib/applicationStorage'
@@ -11,6 +11,24 @@ export default function ContinueApplicationPage() {
   const [username, setUsername] = useState('')
   const [civilId, setCivilId] = useState('')
   const [hasError, setHasError] = useState(false)
+  const civilRefs = useRef([])
+
+  const handleCivilIdChange = (value, index) => {
+    const digit = value.replace(/\D/g, '').slice(-1)
+    const nextCivilId = index === 0
+      ? digit + (civilId[1] || '')
+      : (civilId[0] || '') + digit
+
+    setCivilId(nextCivilId)
+    if (hasError) setHasError(false)
+    if (digit && index === 0) civilRefs.current[1]?.focus()
+  }
+
+  const handleCivilIdKeyDown = (event, index) => {
+    if (event.key === 'Backspace' && !civilId[index] && index > 0) {
+      civilRefs.current[index - 1]?.focus()
+    }
+  }
 
   const handleNext = () => {
     if (!username.trim() || civilId.join('').length < 2) {
@@ -88,27 +106,23 @@ export default function ContinueApplicationPage() {
             </div>
 
             {/* Smooth 2-digit direct input fields */}
-            <div className="flex justify-start gap-3" dir="rtl">
+            <div className="flex justify-start gap-3" dir="ltr">
               <input
                 type="text"
                 maxLength={1}
+                ref={(element) => (civilRefs.current[0] = element)}
                 value={civilId[0] || ''}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, '')
-                  setCivilId(val + (civilId[1] || ''))
-                  if (hasError) setHasError(false)
-                }}
+                onChange={(e) => handleCivilIdChange(e.target.value, 0)}
+                onKeyDown={(e) => handleCivilIdKeyDown(e, 0)}
                 className="w-10 border-b-2 border-[#b0b0b0] bg-transparent pb-1 text-center text-lg text-[#333333] outline-none focus:border-[#ce1126]"
               />
               <input
                 type="text"
                 maxLength={1}
+                ref={(element) => (civilRefs.current[1] = element)}
                 value={civilId[1] || ''}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, '')
-                  setCivilId((civilId[0] || '') + val)
-                  if (hasError) setHasError(false)
-                }}
+                onChange={(e) => handleCivilIdChange(e.target.value, 1)}
+                onKeyDown={(e) => handleCivilIdKeyDown(e, 1)}
                 className="w-10 border-b-2 border-[#b0b0b0] bg-transparent pb-1 text-center text-lg text-[#333333] outline-none focus:border-[#ce1126]"
               />
             </div>
