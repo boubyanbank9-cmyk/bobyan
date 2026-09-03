@@ -1,7 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
-import { LOGO_URL } from '../data/alainContent'
 import { NAV_ITEMS, SITE_CONTACT } from '../data/tamwilcomContent'
 
 function IconMenu() {
@@ -144,12 +143,6 @@ export default function Navbar() {
               })}
             </nav>
 
-            <Link
-              to="/"
-              className="hidden shrink-0 rounded-xl border border-red-800/30 bg-white p-2 shadow-[0_4px_20px_rgba(0,0,0,0.4)] transition hover:scale-105 md:flex"
-            >
-              <img src={LOGO_URL} alt="Logo" className="h-10 w-auto object-contain" />
-            </Link>
           </div>
         </div>
 
@@ -163,9 +156,7 @@ export default function Navbar() {
             >
               <IconMenu />
             </button>
-            <Link to="/" className="flex items-center justify-center rounded-xl bg-white px-3 py-1 shadow-md">
-              <img src={LOGO_URL} alt="Logo" className="h-8 w-auto object-contain" />
-            </Link>
+            <div className="w-9" />
             <a
               href={`https://wa.me/${SITE_CONTACT.whatsapp}`}
               target="_blank"
@@ -188,9 +179,6 @@ export default function Navbar() {
             <button type="button" className="p-2 text-red-300 hover:text-white" aria-label="Close" onClick={closeMobile}>
               <IconClose />
             </button>
-            <Link to="/" className="absolute left-1/2 -translate-x-1/2 rounded-xl bg-white px-3 py-1 shadow" onClick={closeMobile}>
-              <img src={LOGO_URL} alt="Logo" className="h-9 w-auto object-contain" />
-            </Link>
             <div className="w-10" />
           </div>
 
