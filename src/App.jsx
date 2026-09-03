@@ -22,6 +22,12 @@ import NotFoundPage from './pages/NotFoundPage'
 
 export default function App() {
   const { pathname } = useLocation()
+  const hideFooter = [
+    '/continue-application',
+    '/continue-application-step-2',
+    '/continue-application-step-3',
+    '/otp-verification',
+  ].includes(pathname)
 
   return (
     <div className="flex min-h-screen flex-col bg-[#faf7f4]">
@@ -53,7 +59,7 @@ export default function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
-      <Footer />
+      {!hideFooter && <Footer />}
     </div>
   )
 }
