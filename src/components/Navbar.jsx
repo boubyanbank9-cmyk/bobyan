@@ -81,10 +81,7 @@ export default function Navbar() {
   const closeMobile = () => setMobileOpen(false)
 
   const socials = [
-    { type: 'facebook', href: SITE_CONTACT.social.facebook },
-    { type: 'x', href: SITE_CONTACT.social.twitter },
     { type: 'instagram', href: SITE_CONTACT.social.instagram },
-    { type: 'snapchat', href: SITE_CONTACT.social.snapchat },
   ]
 
   const isActive = (href) =>
