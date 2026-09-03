@@ -119,7 +119,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="mx-auto max-w-[1400px] px-4 py-3 sm:px-8">
+        <div className="mx-auto hidden max-w-[1400px] px-4 py-3 sm:px-8 md:block">
           <div className="flex items-center justify-between gap-4">
             <nav className="hidden flex-1 items-center justify-center gap-3 md:flex">
               {NAV_ITEMS.map((item) => {
