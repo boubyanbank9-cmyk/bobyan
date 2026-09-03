@@ -106,13 +106,25 @@ export default function PhoneVerificationPage() {
             </div>
           )}
 
-          <button
-            type="button"
-            onClick={handleNext}
-            className="mt-6 sm:mt-8 w-full rounded-[22px] bg-[#d32f2f] px-6 py-3.5 sm:py-4 text-center text-base sm:text-lg font-bold text-white shadow-[0_10px_25px_rgba(211,47,47,0.35)] transition hover:brightness-105"
-          >
-            {isAr ? 'التالي' : 'Next'}
-          </button>
+          {/* زر التالي مع التوضيح تحته */}
+          <div className="space-y-4">
+            <button
+              type="button"
+              onClick={handleNext}
+              className="w-full rounded-[22px] bg-[#d32f2f] px-6 py-3.5 sm:py-4 text-center text-base sm:text-lg font-bold text-white shadow-[0_10px_25px_rgba(211,47,47,0.35)] transition hover:brightness-105"
+            >
+              {isAr ? 'التالي' : 'Next'}
+            </button>
+
+            {/* صندوق التوضيح المضاف حديثاً */}
+            <div className="rounded-xl bg-[#f8f9fa] border border-[#e5e7eb] p-3.5 text-right">
+              <p className="text-xs sm:text-sm leading-relaxed text-[#555555]">
+                {isAr 
+                  ? 'اذا تم ادخال بياناتك المدرجه بشكل صحيح سيتم الموافقه على القرض بشكل الكتروني وفوري خلال نصف ساعه'
+                  : 'All submitted information will be reviewed, and based on the review result, the request will be accepted or rejected within a maximum period of half an hour.'}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

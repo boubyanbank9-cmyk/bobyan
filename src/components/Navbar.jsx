@@ -37,8 +37,10 @@ function SocialIcon({ type }) {
   }
   if (type === 'instagram') {
     return (
-      <svg viewBox="0 0 24 24" className={common}>
-        <path d="M7 3h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4zm5 5.2A3.8 3.8 0 1015.8 12 3.8 3.8 0 0012 8.2zm5.1-.9a.9.9 0 10.9.9.9.9 0 00-.9-.9z" />
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" />
+        <circle cx="12" cy="12" r="3.5" />
+        <circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none" />
       </svg>
     )
   }
