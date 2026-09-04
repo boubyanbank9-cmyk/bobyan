@@ -11,15 +11,14 @@ export default function AccountLoginPage() {
 
   return (
     <>
-      <SeoMeta title="Sign In – Al Ain Water" path="/account/login" />
-      {/* Clean white login matching alainwater.com/account/login */}
+      <SeoMeta title="تسجيل الدخول | تمويلكم" path="/account/login" />
       <section className="min-h-[70vh] bg-white px-4 py-14 sm:px-6 md:py-20">
         <div className="mx-auto max-w-xl text-center">
           <h1 className="text-3xl font-black text-alain-blue md:text-4xl">
             {lang === 'ar' ? 'تسجيل الدخول لحسابك' : 'Sign In to Your Account'}
           </h1>
           <p className="mt-3 text-sm text-slate-600">
-            {lang === 'ar' ? 'جديد على مياه العين؟ ' : 'New to Al Ain Water? '}
+            {lang === 'ar' ? 'جديد على تمويلكم؟ ' : 'New to Tamwilcom? '}
             <button type="button" className="font-bold text-alain-blue underline">
               {lang === 'ar' ? 'إنشاء حساب' : 'Create an Account'}
             </button>

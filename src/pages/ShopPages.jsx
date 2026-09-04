@@ -135,7 +135,7 @@ function FilterSidebar({ products, sort, setSort }) {
 
       {[
         { key: 'type', label: lang === 'ar' ? 'نوع المياه' : 'Water Type', value: `Bottled Water (${products.length})` },
-        { key: 'brand', label: lang === 'ar' ? 'العلامة' : 'Brand', value: `Al Ain Water (${products.length})` },
+        { key: 'brand', label: lang === 'ar' ? 'العلامة' : 'Brand', value: `Tamwilcom (${products.length})` },
       ].map((block) => (
         <div key={block.key} className="border-t border-slate-200 py-3">
           <button
@@ -172,7 +172,7 @@ export function CollectionsIndexPage() {
 
   return (
     <>
-      <SeoMeta title="Shop by Category – Al Ain Water" path="/collections" />
+      <SeoMeta title="الخدمات | تمويلكم" path="/collections" />
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14">
         <nav className="mb-6 text-sm text-slate-500">
           <Link to="/" className="hover:text-alain-blue">
@@ -234,7 +234,7 @@ export function ProductsPage() {
 
   return (
     <>
-      <SeoMeta title={`${ui.allProducts} – Al Ain Water`} path="/products" />
+      <SeoMeta title={`${ui.allProducts} – Tamwilcom`} path="/products" />
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14">
         <nav className="mb-6 text-sm text-slate-500">
           <Link to="/" className="hover:text-alain-blue">
@@ -287,7 +287,7 @@ export function CollectionPage() {
 
   return (
     <>
-      <SeoMeta title={`${title} – Al Ain Water`} path={`/collections/${slug}`} />
+      <SeoMeta title={`${title} – Tamwilcom`} path={`/collections/${slug}`} />
 
       {/* Secondary category bar like original collection pages */}
       <div className="hidden border-b border-slate-100 bg-white lg:block">

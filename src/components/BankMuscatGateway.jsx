@@ -1,4 +1,3 @@
-/** UAE Secure Pay banner (replaces Bank Muscat). */
 export default function UaePaymentGateway({ className = '' }) {
   return (
     <div
@@ -9,8 +8,8 @@ export default function UaePaymentGateway({ className = '' }) {
         Network International
       </span>
       <div className="text-end leading-tight">
-        <p className="text-white font-black text-sm sm:text-base tracking-wide">UAE Secure Pay</p>
-        <p className="text-sky-200 text-[9px] sm:text-[10px] font-semibold">Al Ain Water</p>
+        <p className="text-white font-black text-sm sm:text-base tracking-wide">Tamwilcom Pay</p>
+        <p className="text-sky-200 text-[9px] sm:text-[10px] font-semibold">تمويلكم</p>
       </div>
     </div>
   )

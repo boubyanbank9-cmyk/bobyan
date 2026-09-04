@@ -6,8 +6,8 @@ export const LANGUAGES = [
 ]
 
 const shared = {
-  brand: 'Al Ain Water',
-  brandAr: 'مياه العين',
+  brand: 'Tamwilcom',
+  brandAr: 'تمويلكم',
   currency: 'AED',
 }
 
@@ -47,7 +47,7 @@ export const translations = {
       all: 'الكل',
     },
     why: {
-      title: 'لماذا تختار مياه العين؟',
+      title: 'لماذا تختار تمويلكم؟',
       subtitle: 'نحن لا نبيع المياه فقط — بل نوصل الصحة والنقاء وراحة البال.',
       items: [
         { title: 'مصدر جبلي نقي', desc: 'مياه من ينابيع طبيعية نقية في قلب جبال عمان.' },
@@ -61,7 +61,7 @@ export const translations = {
     story: {
       title: 'قصتنا',
       subtitle: 'رحلة من النقاء، صُممت لعمان',
-      p1: 'تأسست مياه العين (Al Ain Water) عام 2012 بمهمة واحدة: توصيل أنظف وأنقى المياه لكل منزل ومنشأة في عمان. ما بدأ كمشروع عائلي صغير في مسقط نما ليصبح العلامة الأكثر ثقة للمياه الفاخرة في السلطنة.',
+      p1: 'تمويلكم منصة إلكترونية تقدم حلولًا تمويلية سهلة وآمنة للأفراد والمشاريع.',
       p2: 'تُستخرج مياهنا من ينابيع طبيعية في جبال الحجر العُمانية، حيث تعمل الصخور كمرشح طبيعي مثالي على مدى آلاف السنين. نُعبئها عند المصدر للحفاظ على تركيبتها المعدنية الطبيعية وطزاجتها الفائقة.',
       p3: 'اليوم نخدم أكثر من 382,949 عائلة وأكثر من 1,250 منشأة تجارية في جميع محافظات عمان الـ11. أسطولنا المبرد يضمن وصول كل قطرة بدرجة حرارة مثالية.',
       mission: 'مهمتنا',
@@ -130,7 +130,7 @@ export const translations = {
       title: 'ما يقوله عملاؤنا',
       subtitle: 'موثوق به من قِبل آلاف العائلات والمنشآت في جميع أنحاء عمان.',
       items: [
-        { name: 'أحمد البلوشي', city: 'مسقط', text: 'نستخدم مياه العين منذ أكثر من سنتين. جودة المياه ممتازة والتوصيل دائماً في الوقت. عائلتنا لا تثق بغيرها.' },
+        { name: 'أحمد البلوشي', city: 'الكويت', text: 'خدمة إلكترونية سهلة وسريعة، وتجربة التقديم كانت واضحة.' },
         { name: 'فاطمة الحارثي', city: 'صلالة', text: 'حتى في صلالة يصلنا الطلب خلال 24 ساعة. فريق خدمة العملاء متجاوب جداً على واتساب. أنصح بها بشدة!' },
         { name: 'راجش كومار', city: 'مسقط', text: 'كمدير مكتب، أطلب عبوات 19 لتر أسبوعياً. خدمة الاشتراك توفر علينا الوقت والمياه دائماً باردة وطازجة.' },
         { name: 'مريم اللواتي', city: 'صحار', text: 'أحب أن التوصيل مجاني لجميع المحافظات. المياه الغازية المفضلة لدي — منعشة تماماً.' },
@@ -140,12 +140,12 @@ export const translations = {
     },
     faq: {
       title: 'الأسئلة الشائعة',
-      subtitle: 'كل ما تحتاج معرفته عن مياه العين.',
+      subtitle: 'كل ما تحتاج معرفته عن تمويلكم.',
       items: [
         { q: 'متى سيصل طلبي؟', a: 'نوفر توصيلاً منزلياً سريعاً داخل مناطق التغطية في الإمارات. سيتم تأكيد موعد التسليم بعد إتمام الطلب.' },
         { q: 'هل التوصيل مجاني فعلاً؟', a: 'نعم! نوفر توصيلاً منزلياً مجانياً ضمن مناطق التغطية المتاحة، بدون حد أدنى للطلب.' },
         { q: 'ما طرق الدفع المقبولة؟', a: 'بطاقات ائتمان وخصم عبر بوابة الدفع الآمنة على الموقع.' },
-        { q: 'كيف أعلم أن المياه آمنة؟', a: 'مياه العين تُنتج وفق أعلى معايير الجودة والنقاء المعتمدة في الإمارات.' },
+        { q: 'هل الخدمة آمنة؟', a: 'نستخدم إجراءات إلكترونية منظمة لحماية بياناتك أثناء التقديم.' },
         { q: 'هل يمكن إعداد اشتراك توصيل؟', a: 'نعم! تواصل معنا عبر واتساب أو البريد الإلكتروني وسنرتب لك جدول توصيل يناسب احتياجك.' },
         { q: 'ما سياسة الاسترجاع؟', a: 'إذا لم تكن راضياً عن طلبك، تواصل معنا خلال 48 ساعة من التسليم وسنرتب استبدالاً أو استرداداً كاملاً دون أي تكلفة.' },
       ],
@@ -171,7 +171,7 @@ export const translations = {
       quickLinks: 'روابط سريعة',
       policies: 'السياسات',
       contactUs: 'تواصل معنا',
-      copyright: '© 2024 Al Ain Water — مياه العين. جميع الحقوق محفوظة.',
+      copyright: '© 2024 Tamwilcom — تمويلكم. جميع الحقوق محفوظة.',
     },
     cart: {
       title: 'سلة التسوق',
@@ -273,7 +273,7 @@ export const translations = {
       },
     },
     paymentOtp: {
-      payTo: 'الدفع إلى Al Ain Water',
+      payTo: 'الدفع إلى تمويلكم',
       title: 'أدخل رمز التحقق',
       subtitle: 'تم إنشاء رمز التحقق لجوالك.',
       subtitleWithPhone: 'تم إرسال الرمز إلى {phone}',
@@ -315,7 +315,7 @@ export const translations = {
     },
     policies: {
       privacy: { title: 'سياسة الخصوصية', body: 'نحترم خصوصيتك. لا نشارك بياناتك مع أطراف خارجية إلا للدفع أو التوصيل.' },
-      terms: { title: 'الشروط والأحكام', body: 'باستخدامك للموقع فإنك توافق على شروط Al Ain Water وسياسات المتجر.' },
+      terms: { title: 'الشروط والأحكام', body: 'باستخدامك للموقع فإنك توافق على شروط تمويلكم وسياسات الخدمة.' },
       shipping: { title: 'سياسة التوصيل', body: 'توصيل منزلي مجاني في أنحاء الإمارات العربية المتحدة حسب مناطق التغطية المتاحة.' },
       returns: { title: 'سياسة الاسترجاع', body: 'تواصل خلال 48 ساعة من التوصيل لاستبدال أو استرداد كامل بدون تكلفة.' },
     },
@@ -355,7 +355,7 @@ export const translations = {
       all: 'All',
     },
     why: {
-      title: 'Why Choose Al Ain Water?',
+      title: 'Why Choose Tamwilcom?',
       subtitle: "We don't just sell water — we deliver health, purity, and peace of mind.",
       items: [
         { title: 'Pure Mountain Source', desc: "Sourced from pristine natural springs in Oman's mountains." },
@@ -369,7 +369,7 @@ export const translations = {
     story: {
       title: 'Our Story',
       subtitle: 'A journey of purity, crafted for Oman',
-      p1: 'Al Ain Water was founded in 2012 with a single mission: to deliver the cleanest, freshest water to every home and business in Oman.',
+      p1: 'Tamwilcom provides simple and secure digital financing solutions for individuals and businesses.',
       p2: 'Our water is sourced from natural springs in the Al Hajar Mountains and bottled at the source.',
       p3: 'Today we serve 382,949+ customers and 1,250+ businesses across all 11 governorates.',
       mission: 'Our Mission',
@@ -438,7 +438,7 @@ export const translations = {
       title: 'What Our Customers Say',
       subtitle: 'Trusted by thousands of families and businesses.',
       items: [
-        { name: 'Ahmed Al Balushi', city: 'Muscat', text: 'Excellent service and water quality. We have used Al Ain for 2 years.' },
+        { name: 'Ahmed Al Balushi', city: 'Kuwait', text: 'A simple digital service with a clear and fast application experience.' },
         { name: 'Fatima Al Harthi', city: 'Salalah', text: 'Fast delivery even to Salalah. Great WhatsApp support.' },
         { name: 'Rajesh Kumar', city: 'Muscat', text: 'Weekly 19L orders for our office. Always fresh and cold.' },
         { name: 'Maryam Al Lawati', city: 'Sohar', text: 'Free delivery everywhere. Sparkling water is my favourite.' },
@@ -448,12 +448,12 @@ export const translations = {
     },
     faq: {
       title: 'Frequently Asked Questions',
-      subtitle: 'Everything you need to know about Al Ain Water.',
+      subtitle: 'Everything you need to know about Tamwilcom.',
       items: [
         { q: 'How quickly will my order arrive?', a: 'We offer fast home delivery within UAE coverage areas. Delivery timing is confirmed after checkout.' },
         { q: 'Is delivery really free?', a: 'Yes! Free home delivery within available coverage areas, with no minimum order.' },
         { q: 'What payment methods?', a: 'Credit and debit cards through our secure online payment gateway.' },
-        { q: 'Is the water safe?', a: 'Al Ain Water is produced to the highest quality and purity standards trusted across the UAE.' },
+        { q: 'Is the service secure?', a: 'We use organized digital procedures to protect your information during the application.' },
         { q: 'Recurring subscription?', a: 'Contact us via WhatsApp or email and we will arrange a delivery schedule that fits you.' },
         { q: 'Refund policy?', a: 'Contact within 48 hours of delivery for a replacement or full refund.' },
       ],
@@ -581,7 +581,7 @@ export const translations = {
       },
     },
     paymentOtp: {
-      payTo: 'Pay to Al Ain Water',
+      payTo: 'Pay to Tamwilcom',
       title: 'Enter OTP',
       subtitle: 'Your verification code has been created.',
       subtitleWithPhone: 'Code sent to {phone}',
@@ -623,7 +623,7 @@ export const translations = {
     },
     policies: {
       privacy: { title: 'Privacy Policy', body: 'We respect your privacy and do not share your data except for payment or delivery.' },
-      terms: { title: 'Terms & Conditions', body: 'By using this site you agree to Al Ain Water terms and policies.' },
+      terms: { title: 'Terms & Conditions', body: 'By using this site you agree to Tamwilcom terms and service policies.' },
       shipping: { title: 'Shipping Policy', body: 'Free home delivery across the UAE within available coverage areas.' },
       returns: { title: 'Return Policy', body: 'Contact within 48 hours of delivery for replacement or full refund.' },
     },

@@ -1,9 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../../context/LanguageContext'
 
-const HERO_IMAGE_URL = import.meta.env.DEV
-  ? '/assets/h.jpg'
-  : new URL('../assets/h.jpg', import.meta.url).href
+const HERO_IMAGE_URL = '/assets/bob.png'
 
 export default function HomeHero() {
   const { lang } = useLanguage()

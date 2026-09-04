@@ -15,7 +15,7 @@ export function UaeSecurePayHeader({ payTo, amount, currency }) {
       </div>
 
       <div className="bg-white rounded-md px-2.5 sm:px-3 py-1.5 sm:py-2 shrink-0 shadow-sm text-center leading-tight">
-        <p className="text-[#0b2e4e] font-black text-xs sm:text-sm tracking-wide">UAE</p>
+        <p className="text-[#0b2e4e] font-black text-xs sm:text-sm tracking-wide">Tamwilcom</p>
         <p className="text-[#0077c8] font-semibold text-[9px] sm:text-[10px]">Secure Pay</p>
       </div>
     </header>
