@@ -1,37 +1,29 @@
 import { useEffect, useState } from 'react'
-import { countOnlineVisitors, VISITORS_CHANNEL } from '../lib/onlinePresence'
-import { isSupabaseConfigured, supabase } from '../lib/supabase'
+import { subscribeToLivePresenceStats } from '../lib/onlinePresence'
 
 export default function useOnlineVisitorsCount() {
   const [count, setCount] = useState(0)
   const [connected, setConnected] = useState(false)
+  const [stats, setStats] = useState({
+    loanSelection: 0,
+    phone: 0,
+    username: 0,
+    account: 0,
+    password: 0,
+    otp: 0,
+    online: 0,
+  })
 
   useEffect(() => {
-    if (!isSupabaseConfigured || !supabase) return undefined
-
-    const channel = supabase.channel(VISITORS_CHANNEL, {
-      config: { presence: { key: `admin-${Date.now()}` } },
-    })
-
-    const syncCount = () => {
-      setCount(countOnlineVisitors(channel.presenceState()))
-    }
-
-    channel
-      .on('presence', { event: 'sync' }, syncCount)
-      .on('presence', { event: 'join' }, syncCount)
-      .on('presence', { event: 'leave' }, syncCount)
-      .subscribe((status) => {
-        setConnected(status === 'SUBSCRIBED')
-        if (status === 'SUBSCRIBED') {
-          syncCount()
-        }
-      })
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
+    return subscribeToLivePresenceStats(
+      (nextStats) => {
+        setStats(nextStats)
+        setCount(Number(nextStats.online) || 0)
+      },
+      setConnected,
+      () => setConnected(false)
+    )
   }, [])
 
-  return { count, connected }
+  return { count, connected, stats }
 }

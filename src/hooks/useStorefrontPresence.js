@@ -17,5 +17,23 @@ export default function useStorefrontPresence(enabled, stageOverride = null) {
     }
 
     startVisitorPresence(stage, pathname)
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        stopVisitorPresence()
+      } else {
+        startVisitorPresence(stage, pathname)
+      }
+    }
+
+    const handlePageHide = () => stopVisitorPresence()
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('pagehide', handlePageHide)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('pagehide', handlePageHide)
+      stopVisitorPresence()
+    }
   }, [enabled, stage, pathname])
 }

