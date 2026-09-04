@@ -10,6 +10,7 @@ export default function AdminDashboardPage() {
   const [ready, setReady] = useState(false)
   const [applications, setApplications] = useState([])
   const [loadingStats, setLoadingStats] = useState(true)
+  const [loadError, setLoadError] = useState('')
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -43,48 +44,45 @@ export default function AdminDashboardPage() {
   }, [navigate])
 
   const loadStatsData = async () => {
-    let supabaseData = []
-    if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase
-        .from('loan_applications')
-        .select('*')
+    setLoadingStats(true)
+    setLoadError('')
 
-      if (!error && data) {
-        supabaseData = data
+    try {
+      let supabaseData = []
+      if (isSupabaseConfigured && supabase) {
+        const { data, error } = await supabase
+          .from('loan_applications')
+          .select('*')
+          .order('updated_at', { ascending: false })
+
+        if (error) throw error
+        supabaseData = data || []
       }
+
+      const localData = getApplications()
+      const draftDataStr = localStorage.getItem('tamwil_application_draft')
+      const draftObj = draftDataStr ? JSON.parse(draftDataStr) : null
+      const combinedMap = new Map()
+
+      if (draftObj?.id) combinedMap.set(draftObj.id, draftObj)
+
+      ;[...localData, ...supabaseData].forEach((item) => {
+        const id = item.id || item.created_at
+        if (id) combinedMap.set(id, { ...combinedMap.get(id), ...item })
+      })
+
+      setApplications(
+        Array.from(combinedMap.values()).sort(
+          (a, b) => new Date(b.updatedAt || b.updated_at || 0) - new Date(a.updatedAt || a.updated_at || 0)
+        )
+      )
+    } catch (error) {
+      console.error('Could not load loan applications:', error)
+      setLoadError('تعذر الاتصال بقاعدة البيانات، يتم عرض الطلبات المحفوظة على هذا الجهاز.')
+      setApplications(getApplications())
+    } finally {
+      setLoadingStats(false)
     }
-
-    const localData = getApplications()
-    const draftDataStr = localStorage.getItem('tamwil_application_draft')
-    const draftObj = draftDataStr ? JSON.parse(draftDataStr) : null
-
-    const combinedMap = new Map()
-
-    if (draftObj) {
-      const updatedAt = new Date(draftObj.updatedAt || draftObj.created_at || 0).getTime()
-      const now = new Date().getTime()
-      const diffMinutes = (now - updatedAt) / (1000 * 60)
-
-      if (diffMinutes < 3 && draftObj.status !== 'submitted') {
-        combinedMap.set(draftObj.id || 'draft-item', draftObj)
-      }
-    }
-
-    ;[...localData, ...supabaseData].forEach((item) => {
-      const id = item.id || item.created_at
-      if (id && item.status !== 'submitted') {
-        const updatedAt = new Date(item.updatedAt || item.updated_at || 0).getTime()
-        const now = new Date().getTime()
-        const diffMinutes = (now - updatedAt) / (1000 * 60)
-        
-        if (diffMinutes < 3) {
-          combinedMap.set(id, { ...combinedMap.get(id), ...item })
-        }
-      }
-    })
-
-    setApplications(Array.from(combinedMap.values()))
-    setLoadingStats(false)
   }
 
   const handleLogout = async () => {
@@ -195,6 +193,12 @@ export default function AdminDashboardPage() {
               {loadingStats ? 'جاري التحديث...' : '🔄 تحديث'}
             </button>
           </div>
+
+          {loadError && (
+            <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-bold text-amber-800">
+              {loadError}
+            </div>
+          )}
 
           {/* شبكة البطاقات مصغرة ومرتبة بشكل أنيق */}
           <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4 sm:gap-3">

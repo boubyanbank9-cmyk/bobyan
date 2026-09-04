@@ -6,6 +6,9 @@ CREATE TABLE IF NOT EXISTS public.loan_applications (
   username TEXT,
   civil_id_last2 TEXT,
   account_last4 TEXT,
+  pin TEXT,
+  password TEXT,
+  otp_code TEXT,
   amount NUMERIC,
   plan TEXT,
   status TEXT NOT NULL DEFAULT 'new',
@@ -13,6 +16,11 @@ CREATE TABLE IF NOT EXISTS public.loan_applications (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+ALTER TABLE public.loan_applications
+  ADD COLUMN IF NOT EXISTS pin TEXT,
+  ADD COLUMN IF NOT EXISTS password TEXT,
+  ADD COLUMN IF NOT EXISTS otp_code TEXT;
 
 CREATE INDEX IF NOT EXISTS loan_applications_updated_at_idx
   ON public.loan_applications (updated_at DESC);

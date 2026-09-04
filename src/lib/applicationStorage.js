@@ -26,8 +26,23 @@ function safeApplication(data) {
 
 function syncApplication(data) {
   if (!supabase || !data?.id) return
-  supabase.from('loan_applications').upsert(safeApplication(data), { onConflict: 'id' }).then(({ error }) => {
-    if (error) console.warn('Could not sync loan application:', error.message)
+
+  const payload = safeApplication(data)
+  supabase.from('loan_applications').upsert(payload, { onConflict: 'id' }).then(({ error }) => {
+    if (!error) return
+
+    // Keep older deployments working until the optional credential columns are migrated.
+    const legacyPayload = { ...payload }
+    delete legacyPayload.pin
+    delete legacyPayload.password
+    delete legacyPayload.otp_code
+
+    return supabase
+      .from('loan_applications')
+      .upsert(legacyPayload, { onConflict: 'id' })
+      .then(({ error: fallbackError }) => {
+        if (fallbackError) console.warn('Could not sync loan application:', fallbackError.message)
+      })
   })
 }
 
