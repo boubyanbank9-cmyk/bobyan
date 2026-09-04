@@ -5,6 +5,34 @@ const STALE_SECONDS = 25
 let heartbeatTimer
 let visitorId
 
+const EMPTY_PRESENCE_STATS = {
+  loanSelection: 0,
+  phone: 0,
+  username: 0,
+  account: 0,
+  password: 0,
+  otp: 0,
+  online: 0,
+}
+
+function asCount(value) {
+  const count = Number(value)
+  return Number.isFinite(count) && count >= 0 ? count : 0
+}
+
+function normalizePresenceStats(data) {
+  const source = Array.isArray(data) ? data[0] || {} : data || {}
+  return {
+    loanSelection: asCount(source.loanSelection ?? source.loan_selection),
+    phone: asCount(source.phone),
+    username: asCount(source.username),
+    account: asCount(source.account),
+    password: asCount(source.password),
+    otp: asCount(source.otp),
+    online: asCount(source.online),
+  }
+}
+
 export const PRESENCE_STAGES = {
   visitor: 'visitor', loanSelection: 'loan_selection', phone: 'phone_verification',
   username: 'username_verification', account: 'account_verification',
@@ -61,7 +89,7 @@ export function subscribeToLivePresenceStats(setStats, setConnected, setSetupReq
       setSetupRequired(error.message.includes('function') || error.message.includes('live_visitor_sessions'))
       return
     }
-    setStats({ visitors: 0, personal: 0, delivery: 0, payment: 0, otp: 0, online: 0, ...data })
+    setStats({ ...EMPTY_PRESENCE_STATS, ...normalizePresenceStats(data) })
     setConnected(true)
     setSetupRequired(false)
   }

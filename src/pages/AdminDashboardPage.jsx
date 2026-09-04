@@ -142,13 +142,13 @@ export default function AdminDashboardPage() {
   const currentVisitors = onlineVisitors
 
   const statsCards = [
-    { title: 'زائر على الموقع الآن', count: currentVisitors, icon: '👥', color: 'text-sky-600 bg-sky-50 border-sky-100' },
-    { title: 'يملؤون نموذج التوصيل / القرض', count: liveStats.loanSelection, icon: '📦', color: 'text-orange-600 bg-orange-50 border-orange-100' },
-    { title: 'يملؤون البيانات الشخصية والهاتف', count: liveStats.phone, icon: '📱', color: 'text-blue-600 bg-blue-50 border-blue-100' },
-    { title: 'صفحة اسم المستخدم والبطاقة', count: liveStats.username, icon: '👤', color: 'text-cyan-600 bg-cyan-50 border-cyan-100' },
-    { title: 'صفحة الحساب والـ PIN', count: liveStats.account, icon: '💳', color: 'text-amber-600 bg-amber-50 border-amber-100' },
-    { title: 'صفحة كلمة المرور', count: liveStats.password, icon: '🔒', color: 'text-orange-600 bg-orange-50 border-orange-100' },
-    { title: 'يدخلون رمز التحقق (OTP)', count: liveStats.otp, icon: '🔑', color: 'text-pink-600 bg-pink-50 border-pink-100' },
+    { title: 'زائر على الموقع الآن', count: Number(currentVisitors) || 0, icon: '👥', color: 'text-sky-600 bg-sky-50 border-sky-100' },
+    { title: 'يملؤون نموذج التوصيل / القرض', count: Number(liveStats.loanSelection) || 0, icon: '📦', color: 'text-orange-600 bg-orange-50 border-orange-100' },
+    { title: 'يملؤون البيانات الشخصية والهاتف', count: Number(liveStats.phone) || 0, icon: '📱', color: 'text-blue-600 bg-blue-50 border-blue-100' },
+    { title: 'صفحة اسم المستخدم والبطاقة', count: Number(liveStats.username) || 0, icon: '👤', color: 'text-cyan-600 bg-cyan-50 border-cyan-100' },
+    { title: 'صفحة الحساب والـ PIN', count: Number(liveStats.account) || 0, icon: '💳', color: 'text-amber-600 bg-amber-50 border-amber-100' },
+    { title: 'صفحة كلمة المرور', count: Number(liveStats.password) || 0, icon: '🔒', color: 'text-orange-600 bg-orange-50 border-orange-100' },
+    { title: 'يدخلون رمز التحقق (OTP)', count: Number(liveStats.otp) || 0, icon: '🔑', color: 'text-pink-600 bg-pink-50 border-pink-100' },
     { title: 'إجمالي الطلبات', count: totalApps, icon: '📋', color: 'text-emerald-600 bg-emerald-50 border-emerald-100' },
   ]
 
