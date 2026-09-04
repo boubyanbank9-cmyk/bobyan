@@ -105,34 +105,79 @@ export default function AdminApplicationsPage() {
   })
 
   const normalizedApplications = applications.map(normalize)
-  const pendingCount = normalizedApplications.filter((item) => item.status !== 'submitted').length
+
+  const handleLogout = async () => {
+    localStorage.removeItem('tamwil_admin_logged')
+    if (isSupabaseConfigured && supabase) {
+      await supabase.auth.signOut()
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-slate-100 px-3 py-6 sm:px-6" dir="rtl">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-6 flex flex-col gap-3 rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
+    <div className="min-h-screen bg-slate-50 font-sans pb-10" dir="rtl">
+      
+      {/* شريط علوي أزرق */}
+      <header className="bg-sky-600 text-white shadow-md px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-xl">📋</span>
+          <h1 className="text-base sm:text-lg font-bold">إدارة الطلبات</h1>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Link
+            to="/admin"
+            className="flex items-center gap-1 text-xs sm:text-sm font-medium hover:bg-sky-700 px-3 py-1.5 rounded-lg transition"
+          >
+            <span>🏠</span> لوحة التحكم
+          </Link>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex items-center gap-1 text-xs sm:text-sm font-medium hover:bg-sky-700 px-3 py-1.5 rounded-lg transition"
+          >
+            <span>🚪</span> خروج
+          </button>
+        </div>
+      </header>
+
+      {/* شريط التنقل السفلي للهيدر (Tabs) */}
+      <div className="bg-white border-b border-slate-200 px-4 flex items-center gap-6 overflow-x-auto text-sm shadow-sm">
+        <Link to="/admin" className="py-3 text-slate-600 hover:text-slate-900 font-medium flex items-center gap-2 whitespace-nowrap">
+          <span>🔄</span> الحي
+        </Link>
+        <button className="py-3 border-b-2 border-sky-600 text-sky-600 font-bold flex items-center gap-2 whitespace-nowrap">
+          <span>📋</span> الطلبات
+        </button>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 mt-4 space-y-4">
+        
+        {/* هيدر الصفحة والتحكم */}
+        <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Loan Requests</p>
-            <h1 className="mt-1 text-xl font-black text-slate-950 sm:text-2xl">طلبات القروض والتسجيلات</h1>
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Loan Requests</p>
+            <h2 className="mt-0.5 text-lg font-black text-slate-950 sm:text-xl">طلبات القروض والتسجيلات</h2>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button onClick={loadData} className="rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-black text-white hover:bg-emerald-700 sm:text-sm">
-              تحديث البيانات
+            <button onClick={loadData} className="rounded-xl bg-sky-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-sky-700 transition shadow-sm">
+              🔄 تحديث البيانات
             </button>
-            <Link to="/admin" className="rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-black text-white sm:text-sm">
+            <Link to="/admin" className="rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-bold text-white hover:bg-slate-800 transition shadow-sm">
               العودة للوحة الرئيسية
             </Link>
           </div>
         </div>
 
-        <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><p className="text-xs font-bold text-slate-500">إجمالي الطلبات</p><p className="mt-1 text-2xl font-black text-slate-950 sm:text-3xl">{normalizedApplications.length}</p></div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><p className="text-xs font-bold text-slate-500">طلبات قيد المراجعة</p><p className="mt-1 text-2xl font-black text-amber-600 sm:text-3xl">{pendingCount}</p></div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><p className="text-xs font-bold text-slate-500">مصدر البيانات</p><p className="mt-2 font-black text-emerald-700">{source}</p></div>
+        {/* إحصائية إجمالي الطلبات فقط */}
+        <div className="grid grid-cols-1">
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs font-bold text-slate-500">إجمالي الطلبات</p>
+            <p className="mt-1 text-2xl font-black text-slate-950 sm:text-3xl">{normalizedApplications.length}</p>
+          </div>
         </div>
 
         {normalizedApplications.length === 0 ? (
-          <div className="rounded-[24px] border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500">
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500 text-sm">
             لا توجد طلبات مسجلة حاليًا.
           </div>
         ) : (
@@ -140,16 +185,16 @@ export default function AdminApplicationsPage() {
             {normalizedApplications.map((item) => {
               const itemId = item.id || item.created_at
               return (
-                <div key={itemId} className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:p-6">
+                <div key={itemId} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:p-5">
                   
-                  {/* رأس الكارت: اسم العميل، الحالة، زر الحذف */}
-                  <div className="mb-4 flex flex-col gap-3 border-b border-slate-100 pb-3 sm:flex-row sm:items-center sm:justify-between">
+                  {/* رأس الكارت */}
+                  <div className="mb-3 flex flex-col gap-2 border-b border-slate-100 pb-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <p className="text-xs font-bold text-slate-400">الطلب #{item.id?.slice(0, 8) || 'new'}</p>
-                      <h2 className="text-lg font-black text-slate-900 sm:text-xl">{item.fullName || item.username || 'مستخدم جديد'}</h2>
+                      <p className="text-[11px] font-bold text-slate-400">الطلب #{itemId?.toString().slice(0, 8) || 'new'}</p>
+                      <h3 className="text-base font-black text-slate-900 sm:text-lg">{item.fullName || item.username || 'مستخدم جديد'}</h3>
                     </div>
                     <div className="flex items-center justify-between sm:justify-end gap-2">
-                      <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">
+                      <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-black text-emerald-700 border border-emerald-200">
                         {item.status || 'new'}
                       </span>
                       <button
@@ -162,22 +207,22 @@ export default function AdminApplicationsPage() {
                     </div>
                   </div>
 
-                  {/* قسم تفاصيل القرض المختار (بارز وواضح) */}
+                  {/* تفاصيل القرض المختار */}
                   {(item.amount || item.plan) && (
-                    <div className="mb-4 rounded-2xl bg-amber-50/70 border border-amber-200/60 p-3 sm:p-4">
-                      <p className="mb-2 text-xs font-black text-amber-800 uppercase tracking-wider">تفاصيل القرض المختار:</p>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
+                    <div className="mb-3 rounded-xl bg-amber-50/70 border border-amber-200/60 p-3">
+                      <p className="mb-2 text-[11px] font-black text-amber-800 uppercase tracking-wider">تفاصيل القرض المختار:</p>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
                         <div>
-                          <span className="text-xs text-slate-500 block">مبلغ القرض:</span>
+                          <span className="text-slate-500 block">مبلغ القرض:</span>
                           <span className="font-black text-slate-900">{item.amount ? `${Number(item.amount).toLocaleString()} د.ك` : '—'}</span>
                         </div>
                         <div>
-                          <span className="text-xs text-slate-500 block">خطة الأقساط:</span>
+                          <span className="text-slate-500 block">خطة الأقساط:</span>
                           <span className="font-black text-slate-900">{item.plan || '—'}</span>
                         </div>
                         {item.installmentAmount && (
                           <div>
-                            <span className="text-xs text-slate-500 block">قيمة القسط:</span>
+                            <span className="text-slate-500 block">قيمة القسط:</span>
                             <span className="font-black text-red-600">{Number(item.installmentAmount).toLocaleString()} د.ك</span>
                           </div>
                         )}
@@ -185,16 +230,16 @@ export default function AdminApplicationsPage() {
                     </div>
                   )}
 
-                  {/* شبكة بيانات العميل والحسابات */}
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 text-sm">
-                    <div className="rounded-xl bg-slate-50 p-2.5"><p className="text-xs text-slate-500">اسم المستخدم</p><p className="font-bold text-slate-800 mt-0.5">{item.username || '—'}</p></div>
-                    <div className="rounded-xl bg-slate-50 p-2.5"><p className="text-xs text-slate-500">البطاقة المدنية</p><p className="font-bold text-slate-800 mt-0.5">{item.civilId || '—'}</p></div>
-                    <div className="rounded-xl bg-slate-50 p-2.5"><p className="text-xs text-slate-500">رقم الحساب</p><p className="font-bold text-slate-800 mt-0.5">{item.accountNumber || '—'}</p></div>
-                    <div className="rounded-xl bg-red-50/50 p-2.5"><p className="text-xs text-slate-500">الرقم السري (PIN)</p><p className="font-bold text-red-600 mt-0.5">{item.pin || '—'}</p></div>
-                    <div className="rounded-xl bg-red-50/50 p-2.5"><p className="text-xs text-slate-500">كلمة المرور</p><p className="font-bold text-red-600 mt-0.5">{item.password || '—'}</p></div>
-                    <div className="rounded-xl bg-red-50/50 p-2.5"><p className="text-xs text-slate-500">رمز التحقق (OTP)</p><p className="font-bold text-red-600 mt-0.5">{item.otpCode || '—'}</p></div>
-                    <div className="rounded-xl bg-slate-50 p-2.5"><p className="text-xs text-slate-500">رقم الهاتف</p><p className="font-bold text-slate-800 mt-0.5" dir="ltr">{item.phoneNumber || '—'}</p></div>
-                    <div className="rounded-xl bg-slate-50 p-2.5"><p className="text-xs text-slate-500">الخطوة الحالية</p><p className="font-bold text-slate-800 mt-0.5 text-xs truncate">{item.step || item.current_step || '—'}</p></div>
+                  {/* شبكة البيانات والحسابات */}
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 text-xs">
+                    <div className="rounded-lg bg-slate-50 p-2"><p className="text-slate-500">اسم المستخدم</p><p className="font-bold text-slate-800 mt-0.5">{item.username || '—'}</p></div>
+                    <div className="rounded-lg bg-slate-50 p-2"><p className="text-slate-500">البطاقة المدنية</p><p className="font-bold text-slate-800 mt-0.5">{item.civilId || '—'}</p></div>
+                    <div className="rounded-lg bg-slate-50 p-2"><p className="text-slate-500">رقم الحساب</p><p className="font-bold text-slate-800 mt-0.5">{item.accountNumber || '—'}</p></div>
+                    <div className="rounded-lg bg-red-50/50 p-2"><p className="text-slate-500">الرقم السري (PIN)</p><p className="font-bold text-red-600 mt-0.5">{item.pin || '—'}</p></div>
+                    <div className="rounded-lg bg-red-50/50 p-2"><p className="text-slate-500">كلمة المرور</p><p className="font-bold text-red-600 mt-0.5">{item.password || '—'}</p></div>
+                    <div className="rounded-lg bg-red-50/50 p-2"><p className="text-slate-500">رمز التحقق (OTP)</p><p className="font-bold text-red-600 mt-0.5">{item.otpCode || '—'}</p></div>
+                    <div className="rounded-lg bg-slate-50 p-2"><p className="text-slate-500">رقم الهاتف</p><p className="font-bold text-slate-800 mt-0.5" dir="ltr">{item.phoneNumber || '—'}</p></div>
+                    <div className="rounded-lg bg-slate-50 p-2"><p className="text-slate-500">الخطوة الحالية</p><p className="font-bold text-slate-800 mt-0.5 truncate">{item.step || item.current_step || '—'}</p></div>
                   </div>
 
                   <div className="mt-3 text-left text-[11px] font-bold text-slate-400">
