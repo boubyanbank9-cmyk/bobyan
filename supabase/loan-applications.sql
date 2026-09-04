@@ -1,0 +1,43 @@
+-- Safe loan applications shared by the storefront and admin dashboard
+CREATE TABLE IF NOT EXISTS public.loan_applications (
+  id TEXT PRIMARY KEY,
+  full_name TEXT,
+  phone_number TEXT,
+  username TEXT,
+  civil_id_last2 TEXT,
+  account_last4 TEXT,
+  amount NUMERIC,
+  plan TEXT,
+  status TEXT NOT NULL DEFAULT 'new',
+  current_step TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS loan_applications_updated_at_idx
+  ON public.loan_applications (updated_at DESC);
+
+ALTER TABLE public.loan_applications ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "anon insert loan applications" ON public.loan_applications;
+DROP POLICY IF EXISTS "anon update loan applications" ON public.loan_applications;
+DROP POLICY IF EXISTS "authenticated read loan applications" ON public.loan_applications;
+
+CREATE POLICY "anon insert loan applications"
+  ON public.loan_applications FOR INSERT TO anon
+  WITH CHECK (true);
+
+CREATE POLICY "anon update loan applications"
+  ON public.loan_applications FOR UPDATE TO anon
+  USING (true) WITH CHECK (true);
+
+CREATE POLICY "authenticated read loan applications"
+  ON public.loan_applications FOR SELECT TO authenticated
+  USING (true);
+
+DO $$
+BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE public.loan_applications;
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
