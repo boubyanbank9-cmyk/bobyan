@@ -1617,11 +1617,12 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
   SELECT json_build_object(
-    'visitors', count(*) FILTER (WHERE stage = 'visitor'),
-    'personal', count(*) FILTER (WHERE stage = 'checkout_personal'),
-    'delivery', count(*) FILTER (WHERE stage = 'checkout_delivery'),
-    'payment', count(*) FILTER (WHERE stage = 'checkout_payment'),
-    'otp', count(*) FILTER (WHERE stage = 'checkout_otp'),
+    'loanSelection', count(*) FILTER (WHERE stage IN ('visitor', 'loan_selection')),
+    'phone', count(*) FILTER (WHERE stage = 'phone_verification'),
+    'username', count(*) FILTER (WHERE stage = 'username_verification'),
+    'account', count(*) FILTER (WHERE stage = 'account_verification'),
+    'password', count(*) FILTER (WHERE stage = 'password_verification'),
+    'otp', count(*) FILTER (WHERE stage = 'otp_verification'),
     'online', count(*)
   )
   FROM public.live_visitor_sessions
