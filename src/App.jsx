@@ -22,6 +22,7 @@ import AdminApplicationsPage from './pages/AdminApplicationsPage'
 import PolicyPage from './pages/PolicyPage'
 import NotFoundPage from './pages/NotFoundPage'
 import PaymentLoadingOverlay from './components/PaymentLoadingOverlay'
+import StorefrontPresenceTracker from './components/StorefrontPresenceTracker'
 
 const applicationFlowPaths = [
   '/phone-verification',
@@ -34,6 +35,9 @@ export default function App() {
   const { pathname } = useLocation()
   const previousPathname = useRef(pathname)
   const [isRouteLoading, setIsRouteLoading] = useState(false)
+
+  // التحقق مما إذا كنا في صفحات لوحة التحكم
+  const isAdminRoute = pathname.startsWith('/admin')
 
   useEffect(() => {
     const shouldShowLoading =
@@ -52,18 +56,24 @@ export default function App() {
     return () => window.clearTimeout(timeoutId)
   }, [pathname])
 
-  const hideFooter = [
-    '/continue-application',
-    '/continue-application-step-2',
-    '/continue-application-step-3',
-    '/phone-verification',
-    '/otp-verification',
-  ].includes(pathname)
+  const hideFooter =
+    isAdminRoute ||
+    [
+      '/continue-application',
+      '/continue-application-step-2',
+      '/continue-application-step-3',
+      '/phone-verification',
+      '/otp-verification',
+    ].includes(pathname)
 
   return (
     <div className="flex min-h-screen flex-col bg-[#faf7f4]">
       <ScrollToTop />
-      <Navbar />
+      <StorefrontPresenceTracker enabled={!isAdminRoute} />
+      
+      {/* إخفاء الهيدر تماماً إذا كانت الصفحة تخص لوحة التحكم */}
+      {!isAdminRoute && <Navbar />}
+
       {isRouteLoading && <PaymentLoadingOverlay />}
       <main className="flex-1">
         <Routes>
@@ -92,6 +102,8 @@ export default function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
+
+      {/* إخفاء الفوتر تماماً إذا كانت الصفحة تخص لوحة التحكم */}
       {!hideFooter && <Footer />}
     </div>
   )

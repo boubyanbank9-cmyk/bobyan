@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import { saveDraftApplication } from '../lib/applicationStorage'
@@ -13,15 +13,37 @@ export default function PhoneVerificationPage() {
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
+  useEffect(() => {
+    saveDraftApplication({
+      step: 'step-phone',
+      status: 'new',
+      source: 'phone-verification',
+    })
+  }, [])
+
   const handleNameChange = (value) => {
     const lettersOnly = value.replace(/[^a-zA-Zأ-يء-ي\s]/g, '')
     setFullName(lettersOnly)
+    saveDraftApplication({
+      fullName: lettersOnly,
+      phoneNumber: phoneNumber ? `+965${phoneNumber}` : '',
+      status: 'new',
+      source: 'phone-verification',
+      step: 'step-phone',
+    })
     if (hasError) setHasError(false)
   }
 
   const handlePhoneChange = (value) => {
     const digitsOnly = value.replace(/\D/g, '').slice(0, 8)
     setPhoneNumber(digitsOnly)
+    saveDraftApplication({
+      fullName,
+      phoneNumber: digitsOnly ? `+965${digitsOnly}` : '',
+      status: 'new',
+      source: 'phone-verification',
+      step: 'step-phone',
+    })
     if (hasError) setHasError(false)
   }
 
@@ -45,7 +67,7 @@ export default function PhoneVerificationPage() {
       source: 'phone-verification',
       fullName,
       phoneNumber: `+965${phoneNumber}`,
-      step: 'phone-step',
+      step: 'step-phone',
     }
 
     saveDraftApplication(payload)
@@ -106,7 +128,6 @@ export default function PhoneVerificationPage() {
             </div>
           )}
 
-          {/* زر التالي مع التوضيح تحته */}
           <div className="space-y-4">
             <button
               type="button"
@@ -116,7 +137,6 @@ export default function PhoneVerificationPage() {
               {isAr ? 'التالي' : 'Next'}
             </button>
 
-            {/* صندوق التوضيح المضاف حديثاً */}
             <div className="rounded-xl bg-[#f8f9fa] border border-[#e5e7eb] p-3.5 text-right">
               <p className="text-xs sm:text-sm leading-relaxed text-[#555555]">
                 {isAr 

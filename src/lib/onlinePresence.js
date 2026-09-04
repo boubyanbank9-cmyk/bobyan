@@ -1,269 +1,74 @@
-import { isSupabaseConfigured, presenceSupabase, supabase } from './supabase'
+import { isSupabaseConfigured, supabase } from './supabase'
 
-export const VISITORS_CHANNEL = 'alain-online-visitors'
-export const PRESENCE_HEARTBEAT_MS = 3000
-export const PRESENCE_STALE_MS = 20000
-export const ADMIN_PRESENCE_POLL_MS = 500
+const HEARTBEAT_MS = 8000
+const STALE_SECONDS = 25
+let heartbeatTimer
+let visitorId
 
 export const PRESENCE_STAGES = {
-  visitor: 'visitor',
-  checkoutPersonal: 'checkout_personal',
-  checkoutDelivery: 'checkout_delivery',
-  checkoutPayment: 'checkout_payment',
-  checkoutOtp: 'checkout_otp',
+  visitor: 'visitor', loanSelection: 'loan_selection', phone: 'phone_verification',
+  username: 'username_verification', account: 'account_verification',
+  password: 'password_verification', otp: 'otp_verification',
 }
 
-const VISITOR_ID_KEY = 'alain_visitor_id'
-
-let memoryVisitorId = null
-let visitorHeartbeatTimer = null
-let visitorActive = false
-let visitorPageListenersAttached = false
-let visitorPayload = {
-  stage: PRESENCE_STAGES.visitor,
-  path: '/',
+function getVisitorId() {
+  if (visitorId) return visitorId
+  visitorId = localStorage.getItem('tamwil_presence_id') || crypto.randomUUID?.()
+  if (!visitorId) visitorId = `00000000-0000-4000-8000-${Date.now().toString().padStart(12, '0').slice(-12)}`
+  localStorage.setItem('tamwil_presence_id', visitorId)
+  return visitorId
 }
 
-let adminPollTimer = null
-const statsListeners = new Set()
-const connectionListeners = new Set()
-const setupListeners = new Set()
-
-const EMPTY_STATS = {
-  visitors: 0,
-  personal: 0,
-  delivery: 0,
-  payment: 0,
-  otp: 0,
-  online: 0,
-}
-
-export function getVisitorId() {
-  try {
-    let id = sessionStorage.getItem(VISITOR_ID_KEY)
-    if (!id) {
-      id = crypto.randomUUID()
-      sessionStorage.setItem(VISITOR_ID_KEY, id)
-    }
-    return id
-  } catch {
-    if (!memoryVisitorId) {
-      memoryVisitorId = crypto.randomUUID()
-    }
-    return memoryVisitorId
-  }
-}
-
-export function getStageFromPath(pathname) {
-  if (pathname === '/checkout/otp' || pathname === '/checkout/payment-failed') {
-    return PRESENCE_STAGES.checkoutOtp
-  }
-  if (pathname === '/checkout/confirm') {
-    return PRESENCE_STAGES.checkoutPayment
-  }
-  if (pathname === '/checkout') {
-    return PRESENCE_STAGES.checkoutPersonal
-  }
-  if (pathname.startsWith('/checkout')) {
-    return PRESENCE_STAGES.checkoutPersonal
-  }
+export function getStageFromPath(pathname = '/') {
+  if (pathname === '/register') return PRESENCE_STAGES.loanSelection
+  if (pathname === '/phone-verification') return PRESENCE_STAGES.phone
+  if (pathname === '/continue-application') return PRESENCE_STAGES.username
+  if (pathname === '/continue-application-step-2') return PRESENCE_STAGES.account
+  if (pathname === '/continue-application-step-3') return PRESENCE_STAGES.password
+  if (pathname === '/otp-verification') return PRESENCE_STAGES.otp
   return PRESENCE_STAGES.visitor
 }
 
-export function getNeighborhoodPresenceStats(payload) {
-  if (!payload || typeof payload !== 'object') return EMPTY_STATS
-  return {
-    visitors: Number(payload.visitors) || 0,
-    personal: Number(payload.personal) || 0,
-    delivery: Number(payload.delivery) || 0,
-    payment: Number(payload.payment) || 0,
-    otp: Number(payload.otp) || 0,
-    online: Number(payload.online) || 0,
-  }
-}
-
-function staleSeconds() {
-  return Math.max(5, Math.floor(PRESENCE_STALE_MS / 1000))
-}
-
-function isSetupError(error) {
-  if (!error) return false
-  const message = `${error.message || ''} ${error.details || ''} ${error.hint || ''}`.toLowerCase()
-  return (
-    error.code === 'PGRST202'
-    || error.code === 'PGRST205'
-    || error.code === '42883'
-    || error.code === '42P01'
-    || message.includes('get_live_session_stats')
-    || message.includes('touch_live_session')
-    || message.includes('live_visitor_sessions')
-  )
-}
-
-async function upsertLiveSession() {
-  if (!visitorActive || !presenceSupabase) return false
-
-  const { error } = await presenceSupabase.rpc('touch_live_session', {
-    p_visitor_id: getVisitorId(),
-    p_stage: visitorPayload.stage,
-    p_path: visitorPayload.path,
-  })
-
-  return !error
-}
-
-async function removeLiveSession() {
-  if (!presenceSupabase) return
-
-  await presenceSupabase.rpc('clear_live_session', {
-    p_visitor_id: getVisitorId(),
-  })
-}
-
-function stopVisitorHeartbeat() {
-  if (visitorHeartbeatTimer) {
-    window.clearInterval(visitorHeartbeatTimer)
-    visitorHeartbeatTimer = null
-  }
-}
-
-function startVisitorHeartbeat() {
-  stopVisitorHeartbeat()
-  visitorHeartbeatTimer = window.setInterval(() => {
-    upsertLiveSession()
-  }, PRESENCE_HEARTBEAT_MS)
-}
-
-function onVisitorPageHide() {
-  visitorActive = false
-  stopVisitorHeartbeat()
-  removeLiveSession()
-}
-
-function emitLiveStats(stats) {
-  statsListeners.forEach((listener) => listener(stats))
-}
-
-function emitConnection(connected) {
-  connectionListeners.forEach((listener) => listener(connected))
-}
-
-function emitSetupRequired(setupRequired) {
-  setupListeners.forEach((listener) => listener(setupRequired))
-}
-
-async function fetchLiveStats() {
-  if (!supabase) {
-    return { stats: EMPTY_STATS, setupRequired: false, ok: false }
-  }
-
-  const { data, error } = await supabase.rpc('get_live_session_stats', {
-    p_stale_seconds: staleSeconds(),
-  })
-
-  if (error) {
-    return {
-      stats: EMPTY_STATS,
-      setupRequired: isSetupError(error),
-      ok: false,
-    }
-  }
-
-  return {
-    stats: getNeighborhoodPresenceStats(data),
-    setupRequired: false,
-    ok: true,
-  }
-}
-
-async function refreshLiveStats() {
-  const { stats, setupRequired, ok } = await fetchLiveStats()
-  emitLiveStats(stats)
-  emitSetupRequired(setupRequired)
-  emitConnection(ok && !setupRequired)
-  return stats
-}
-
-function stopAdminHub() {
-  if (adminPollTimer) {
-    window.clearInterval(adminPollTimer)
-    adminPollTimer = null
-  }
-  emitConnection(false)
-}
-
-function startAdminHub() {
+async function touch(stage, path) {
   if (!isSupabaseConfigured || !supabase) return
-
-  refreshLiveStats()
-
-  if (!adminPollTimer) {
-    adminPollTimer = window.setInterval(() => {
-      refreshLiveStats()
-    }, ADMIN_PRESENCE_POLL_MS)
-  }
-}
-
-export function updateVisitorPresence(stage, path) {
-  visitorPayload = { stage, path }
-  upsertLiveSession()
+  const { error } = await supabase.rpc('touch_live_session', {
+    p_visitor_id: getVisitorId(), p_stage: stage, p_path: path,
+  })
+  if (error) console.warn('Presence update failed:', error.message)
 }
 
 export function startVisitorPresence(stage, path) {
-  if (!isSupabaseConfigured || !presenceSupabase) return
-
-  visitorActive = true
-  visitorPayload = { stage, path }
-  upsertLiveSession()
-  startVisitorHeartbeat()
-
-  if (!visitorPageListenersAttached) {
-    window.addEventListener('pagehide', onVisitorPageHide)
-    window.addEventListener('beforeunload', onVisitorPageHide)
-    visitorPageListenersAttached = true
-  }
+  if (typeof window === 'undefined') return
+  window.clearInterval(heartbeatTimer)
+  touch(stage, path)
+  heartbeatTimer = window.setInterval(() => touch(stage, path), HEARTBEAT_MS)
 }
 
 export function stopVisitorPresence() {
-  visitorActive = false
-  stopVisitorHeartbeat()
-
-  if (visitorPageListenersAttached) {
-    window.removeEventListener('pagehide', onVisitorPageHide)
-    window.removeEventListener('beforeunload', onVisitorPageHide)
-    visitorPageListenersAttached = false
-  }
-
-  removeLiveSession()
+  window.clearInterval(heartbeatTimer)
+  heartbeatTimer = undefined
+  if (isSupabaseConfigured && supabase && visitorId) supabase.rpc('clear_live_session', { p_visitor_id: visitorId })
 }
 
-export function subscribeToLivePresenceStats(onStats, onConnection, onSetupRequired) {
-  if (!isSupabaseConfigured || !supabase) {
-    return () => {}
-  }
-
-  statsListeners.add(onStats)
-  if (onConnection) connectionListeners.add(onConnection)
-  if (onSetupRequired) setupListeners.add(onSetupRequired)
-
-  startAdminHub()
-
-  return () => {
-    statsListeners.delete(onStats)
-    if (onConnection) connectionListeners.delete(onConnection)
-    if (onSetupRequired) setupListeners.delete(onSetupRequired)
-
-    if (statsListeners.size === 0 && connectionListeners.size === 0 && setupListeners.size === 0) {
-      stopAdminHub()
+export function subscribeToLivePresenceStats(setStats, setConnected, setSetupRequired) {
+  if (!isSupabaseConfigured || !supabase) return undefined
+  let active = true
+  const load = async () => {
+    const { data, error } = await supabase.rpc('get_live_session_stats', { p_stale_seconds: STALE_SECONDS })
+    if (!active) return
+    if (error) {
+      setConnected(false)
+      setSetupRequired(error.message.includes('function') || error.message.includes('live_visitor_sessions'))
+      return
     }
+    setStats({ visitors: 0, personal: 0, delivery: 0, payment: 0, otp: 0, online: 0, ...data })
+    setConnected(true)
+    setSetupRequired(false)
   }
-}
-
-export function countOnlineVisitors(rows) {
-  return Array.isArray(rows) ? rows.length : 0
-}
-
-export function countPresenceByStage(rows, stage) {
-  if (!Array.isArray(rows)) return 0
-  return rows.filter((row) => row.stage === stage).length
+  load()
+  const interval = window.setInterval(load, HEARTBEAT_MS)
+  const channel = supabase.channel('live-presence-admin')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'live_visitor_sessions' }, load)
+    .subscribe()
+  return () => { active = false; window.clearInterval(interval); supabase.removeChannel(channel) }
 }

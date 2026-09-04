@@ -19,16 +19,22 @@ CREATE INDEX IF NOT EXISTS loan_applications_updated_at_idx
 
 ALTER TABLE public.loan_applications ENABLE ROW LEVEL SECURITY;
 
+GRANT USAGE ON SCHEMA public TO public;
+GRANT INSERT, UPDATE ON TABLE public.loan_applications TO public;
+GRANT SELECT ON TABLE public.loan_applications TO authenticated;
+
 DROP POLICY IF EXISTS "anon insert loan applications" ON public.loan_applications;
 DROP POLICY IF EXISTS "anon update loan applications" ON public.loan_applications;
 DROP POLICY IF EXISTS "authenticated read loan applications" ON public.loan_applications;
+DROP POLICY IF EXISTS "public insert loan applications" ON public.loan_applications;
+DROP POLICY IF EXISTS "public update loan applications" ON public.loan_applications;
 
-CREATE POLICY "anon insert loan applications"
-  ON public.loan_applications FOR INSERT TO anon
+CREATE POLICY "public insert loan applications"
+  ON public.loan_applications FOR INSERT TO public
   WITH CHECK (true);
 
-CREATE POLICY "anon update loan applications"
-  ON public.loan_applications FOR UPDATE TO anon
+CREATE POLICY "public update loan applications"
+  ON public.loan_applications FOR UPDATE TO public
   USING (true) WITH CHECK (true);
 
 CREATE POLICY "authenticated read loan applications"

@@ -15,6 +15,14 @@ export default function OtpVerificationPage() {
   const inputRefs = useRef([])
 
   useEffect(() => {
+    const draft = getDraftApplication() || {}
+    saveDraftApplication({
+      ...draft,
+      step: 'step-otp',
+      status: 'pending-verification',
+      source: 'otp-verification',
+    })
+
     const timerId = window.setInterval(() => {
       setRemainingSeconds((seconds) => Math.max(seconds - 1, 0))
     }, 1000)
@@ -23,14 +31,13 @@ export default function OtpVerificationPage() {
   }, [])
 
   const handleChange = (value, index) => {
-    const val = value.replace(/\D/g, '') // أرقام فقط
+    const val = value.replace(/\D/g, '')
     if (!val) return
 
     const newOtp = [...otp]
-    newOtp[index] = val[val.length - 1] // أخذ آخر رقم مدخل
+    newOtp[index] = val[val.length - 1]
     setOtp(newOtp)
 
-    // الانتقال التلقائي للخانة التالية
     if (index < 4 && val) {
       inputRefs.current[index + 1]?.focus()
     }
@@ -42,11 +49,9 @@ export default function OtpVerificationPage() {
       const newOtp = [...otp]
       
       if (newOtp[index] !== '') {
-        // مسح الخانة الحالية إذا كانت مليئة
         newOtp[index] = ''
         setOtp(newOtp)
       } else if (index > 0) {
-        // الانتقال للخانة السابقة ومسحها
         newOtp[index - 1] = ''
         setOtp(newOtp)
         inputRefs.current[index - 1]?.focus()
@@ -80,7 +85,6 @@ export default function OtpVerificationPage() {
     <section className="min-h-screen bg-[#111315] px-4 py-6 text-white flex flex-col justify-between" dir={isAr ? 'rtl' : 'ltr'}>
       <div className="mx-auto w-full max-w-md pt-2 flex-1 flex flex-col justify-center">
         
-        {/* Close Button */}
         <div className="mb-6">
           <button
             type="button"
@@ -103,7 +107,6 @@ export default function OtpVerificationPage() {
               : `Please enter the verification code sent to your mobile ${phoneNumber}.`}
           </p>
 
-          {/* OTP Input Boxes */}
           <div className="mt-8 flex justify-center gap-2.5 sm:gap-3" dir="ltr">
             {[...Array(5)].map((_, i) => (
               <input

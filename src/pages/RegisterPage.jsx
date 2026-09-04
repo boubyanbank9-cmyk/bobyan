@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import StatsBar from '../components/site/StatsBar'
 import SeoMeta from '../components/SeoMeta'
@@ -11,6 +11,7 @@ import {
   calculateInstallmentAmount,
 } from '../data/tamwilcomContent'
 import { useLanguage } from '../context/LanguageContext'
+import { saveDraftApplication } from '../lib/applicationStorage'
 
 function SelectionCard({ active, onClick, children, className = '' }) {
   return (
@@ -58,18 +59,54 @@ export default function RegisterPage() {
   const [selectedPlan, setSelectedPlan] = useState(INSTALLMENT_PLANS[0].id)
   const [openFaq, setOpenFaq] = useState(0)
 
-  const selectedLoanAmount =
-    REGISTER_LOAN_PRODUCTS.find((loan) => loan.id === selectedLoan)?.amount ?? 0
+  const selectedLoanObj = REGISTER_LOAN_PRODUCTS.find((loan) => loan.id === selectedLoan) ?? REGISTER_LOAN_PRODUCTS[2]
+  const selectedPlanObj = INSTALLMENT_PLANS.find((plan) => plan.id === selectedPlan) ?? INSTALLMENT_PLANS[0]
+  
+  const selectedLoanAmount = selectedLoanObj.amount ?? 0
+  const installmentValue = calculateInstallmentAmount(selectedLoanAmount, selectedPlanObj.years)
 
-  // إنشاء مرجع لقسم الكارتين (خطط الأقساط)
   const plansSectionRef = useRef(null)
 
-  // دالة لاختيار القرض وتنفيذ السكرول للأسفل
+  const updateAndSaveSelection = (loanId, planId) => {
+    const currentLoanObj = REGISTER_LOAN_PRODUCTS.find((loan) => loan.id === loanId) ?? selectedLoanObj
+    const currentPlanObj = INSTALLMENT_PLANS.find((plan) => plan.id === planId) ?? selectedPlanObj
+    const currentAmount = currentLoanObj.amount ?? 0
+    const currentInstallment = calculateInstallmentAmount(currentAmount, currentPlanObj.years)
+
+    const loanPayload = {
+      amount: currentAmount,
+      loanType: currentLoanObj.label[isAr ? 'ar' : 'en'],
+      plan: currentPlanObj.title[isAr ? 'ar' : 'en'],
+      installmentAmount: currentInstallment,
+      step: 'step-register',
+      status: 'new',
+      source: 'register-page',
+      updatedAt: new Date().toISOString(),
+    }
+
+    saveDraftApplication(loanPayload)
+  }
+
+  useEffect(() => {
+    updateAndSaveSelection(selectedLoan, selectedPlan)
+  }, [])
+
   const handleLoanSelect = (loanId) => {
     setSelectedLoan(loanId)
+    updateAndSaveSelection(loanId, selectedPlan)
     if (plansSectionRef.current) {
       plansSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
+  }
+
+  const handlePlanSelect = (planId) => {
+    setSelectedPlan(planId)
+    updateAndSaveSelection(selectedLoan, planId)
+  }
+
+  const handleContinue = () => {
+    updateAndSaveSelection(selectedLoan, selectedPlan)
+    navigate('/phone-verification')
   }
 
   return (
@@ -141,7 +178,6 @@ export default function RegisterPage() {
         </div>
       </section>
 
-      {/* تم ربط المرجع (ref) بهذا القسم ليتم النزول إليه */}
       <section ref={plansSectionRef} className="bg-[#faf7f4] pb-10 pt-4 md:pb-14">
         <div className="mx-auto max-w-6xl px-4">
           <div className="text-center">
@@ -156,13 +192,13 @@ export default function RegisterPage() {
           <div className="mt-8 grid gap-4 lg:grid-cols-3">
             {INSTALLMENT_PLANS.map((plan, index) => {
               const active = selectedPlan === plan.id
-              const installmentValue = calculateInstallmentAmount(selectedLoanAmount, plan.years)
+              const calculatedInstallment = calculateInstallmentAmount(selectedLoanAmount, plan.years)
 
               return (
                 <SelectionCard
                   key={plan.id}
                   active={active}
-                  onClick={() => setSelectedPlan(plan.id)}
+                  onClick={() => handlePlanSelect(plan.id)}
                 >
                   <p className="text-sm font-medium text-slate-500">
                     {REGISTER_PAGE.installmentPrefix[isAr ? 'ar' : 'en']}{' '}
@@ -174,19 +210,20 @@ export default function RegisterPage() {
                   <p className="mt-4 text-sm font-medium text-slate-500">
                     {HOME.installmentLabel[isAr ? 'ar' : 'en']}
                   </p>
-                  <AmountButton active={active} amount={installmentValue} isAr={isAr} />
+                  <AmountButton active={active} amount={calculatedInstallment} isAr={isAr} />
                   <SelectedCheck active={active} />
                 </SelectionCard>
               )
             })}
           </div>
 
-          <Link
-            to="/phone-verification"
+          <button
+            type="button"
+            onClick={handleContinue}
             className="mt-8 flex w-full items-center justify-center rounded-md bg-gradient-to-r from-red-700 to-red-600 py-4 text-lg font-bold text-white shadow-[0_8px_24px_rgba(220,38,38,0.25)] transition hover:from-red-600 hover:to-red-500"
           >
             {HOME.continue[isAr ? 'ar' : 'en']}
-          </Link>
+          </button>
         </div>
       </section>
 

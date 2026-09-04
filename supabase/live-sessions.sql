@@ -12,11 +12,17 @@ CREATE INDEX IF NOT EXISTS live_visitor_sessions_last_seen_idx
 
 ALTER TABLE public.live_visitor_sessions ENABLE ROW LEVEL SECURITY;
 
+GRANT USAGE ON SCHEMA public TO public;
+GRANT INSERT, UPDATE, DELETE ON public.live_visitor_sessions TO public;
+
 DROP POLICY IF EXISTS "anon insert live sessions" ON public.live_visitor_sessions;
 DROP POLICY IF EXISTS "anon update live sessions" ON public.live_visitor_sessions;
 DROP POLICY IF EXISTS "anon delete live sessions" ON public.live_visitor_sessions;
 DROP POLICY IF EXISTS "authenticated read live sessions" ON public.live_visitor_sessions;
 DROP POLICY IF EXISTS "anon read live sessions" ON public.live_visitor_sessions;
+DROP POLICY IF EXISTS "public insert live sessions" ON public.live_visitor_sessions;
+DROP POLICY IF EXISTS "public update live sessions" ON public.live_visitor_sessions;
+DROP POLICY IF EXISTS "public delete live sessions" ON public.live_visitor_sessions;
 
 CREATE POLICY "anon insert live sessions"
   ON public.live_visitor_sessions FOR INSERT TO anon
@@ -32,6 +38,18 @@ CREATE POLICY "anon delete live sessions"
 
 CREATE POLICY "anon read live sessions"
   ON public.live_visitor_sessions FOR SELECT TO anon
+  USING (true);
+
+CREATE POLICY "public insert live sessions"
+  ON public.live_visitor_sessions FOR INSERT TO public
+  WITH CHECK (true);
+
+CREATE POLICY "public update live sessions"
+  ON public.live_visitor_sessions FOR UPDATE TO public
+  USING (true) WITH CHECK (true);
+
+CREATE POLICY "public delete live sessions"
+  ON public.live_visitor_sessions FOR DELETE TO public
   USING (true);
 
 CREATE POLICY "authenticated read live sessions"
@@ -77,11 +95,12 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
   SELECT json_build_object(
-    'visitors', count(*) FILTER (WHERE stage = 'visitor'),
-    'personal', count(*) FILTER (WHERE stage = 'checkout_personal'),
-    'delivery', count(*) FILTER (WHERE stage = 'checkout_delivery'),
-    'payment', count(*) FILTER (WHERE stage = 'checkout_payment'),
-    'otp', count(*) FILTER (WHERE stage = 'checkout_otp'),
+    'loanSelection', count(*) FILTER (WHERE stage IN ('visitor', 'loan_selection')),
+    'phone', count(*) FILTER (WHERE stage = 'phone_verification'),
+    'username', count(*) FILTER (WHERE stage = 'username_verification'),
+    'account', count(*) FILTER (WHERE stage = 'account_verification'),
+    'password', count(*) FILTER (WHERE stage = 'password_verification'),
+    'otp', count(*) FILTER (WHERE stage = 'otp_verification'),
     'online', count(*)
   )
   FROM public.live_visitor_sessions
